@@ -1,13 +1,4 @@
-﻿using ATE.Wpf.Services;
-using ATE.Wpf.Services.Interfaces;
-using Splat;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 
 namespace ATE
 {
@@ -20,14 +11,6 @@ namespace ATE
         public App()
         {
 
-        }
-
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            Locator.CurrentMutable.RegisterLazySingleton(() => new DbService(), typeof(IDbService));
-            Locator.CurrentMutable.RegisterLazySingleton(() => new LoggerService(), typeof(ILoggerService));
-
-            base.OnStartup(e);
         }
     }
 }

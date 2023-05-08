@@ -8,11 +8,12 @@ namespace ATE.Core
 {
     public static class Constants
     {
+
+        public const string ShellView = "Core.Shell";
+
         public const string MainRegion = "Core.MainRegion";
 
         public const string MainSideBarRegion = "Core.SideBarRegion";
-
-        public const string ShellView = "Core.Shell";
 
         // main pages
         public const string TestBoardView = "Core.TestBoard";
