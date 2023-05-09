@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ATE.Graphics.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,13 +18,24 @@ namespace ATE.NodeEditor
 {
     public class GraphicsView : Control
     {
+        private Alignment alignment;
+
         static GraphicsView()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(GraphicsView), new FrameworkPropertyMetadata(typeof(GraphicsView)));
         }
 
+
+        #region Events
         protected override void OnRender(DrawingContext drawingContext)
         {
+            // 绘制框架
+
+            // 绘制网格
+
+            // 绘制节点
+
+            // 绘制连线
+            
             base.OnRender(drawingContext);
         }
 
@@ -31,5 +43,15 @@ namespace ATE.NodeEditor
         {
             base.OnRenderSizeChanged(sizeInfo);
         }
+        #endregion
+
+        #region Fields
+        public Alignment Alignment { get => alignment; set => alignment = value; }
+        #endregion
+
+
+
+
+
     }
 }
