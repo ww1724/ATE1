@@ -6,7 +6,7 @@
         mc:Ignorable="d"
         xmlns:ccontrols="clr-namespace:ATE.Controls"
         xmlns:helpers="clr-namespace:Zoranof.UI.Wpf.Helpers;assembly=Zoranof.UI.Wpf"
-        Title="MainWindow" Height="450" Width="800"
+        Title="MainWindow" Height="600" Width="1200"
         WindowState="Maximized">
 
     <WindowChrome.WindowChrome>
@@ -24,19 +24,13 @@
             <RowDefinition />
         </Grid.RowDefinitions>
 
-        
-
         <Grid Grid.Row="0">
             <ccontrols:Header />
         </Grid>
 
         <Grid Grid.Row="1">
-            <ContentControl x:Name="ActiveItem" />
-            <StackPanel Orientation="Horizontal" Margin="15" VerticalAlignment="Bottom">
-                <Button x:Name="GoNextButton" Content="Go to first" />
-                <Button x:Name="GoBackButton" Content="Go back" Margin="5 0 0 0" />
-            </StackPanel>
+            <ContentControl x:Name="ActiveItem"/>
         </Grid>
-        
+
     </Grid>
 </Window>

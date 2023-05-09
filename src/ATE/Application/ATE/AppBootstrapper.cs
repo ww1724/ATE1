@@ -1,5 +1,4 @@
-﻿using ATE.Mvvm;
-using ATE.ViewModels;
+﻿using ATE.ViewModels;
 using ATE.Wpf.Services.Interfaces;
 using ATE.Wpf.Services;
 using Caliburn.Micro;
@@ -12,6 +11,8 @@ using ATE.Core;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
 using System.ComponentModel.Composition;
+using ATE.Core.Stores;
+using ATE.Core.Mvvm;
 
 namespace ATE
 {
@@ -60,6 +61,10 @@ namespace ATE
 
             simpleContainer = new SimpleContainer();
             simpleContainer.Singleton<IViewModel, ShellViewModel>(Constants.ShellView);
+            simpleContainer.Singleton<IViewModel, MenuStore>(Constants.MenuStore);
+
+            simpleContainer.PerRequest<IViewModel, TestingViewModel>(Constants.TestingBoardView);
+            simpleContainer.PerRequest<IViewModel, ConsoleViewModel>(Constants.ConsoleView);
             batch.AddExportedValue(simpleContainer);
 
             container.Compose(batch);

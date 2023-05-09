@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ATE.NodeEditor
+namespace ATE.Graphics
 {
-    public class NodeItem
+    public class GraphicsScene
     {
     }
 }

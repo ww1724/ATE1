@@ -15,11 +15,11 @@ using System.Windows.Shapes;
 
 namespace ATE.NodeEditor
 {
-    public class NodeEditor : Control
+    public class GraphicsView : Control
     {
-        static NodeEditor()
+        static GraphicsView()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(NodeEditor), new FrameworkPropertyMetadata(typeof(NodeEditor)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(GraphicsView), new FrameworkPropertyMetadata(typeof(GraphicsView)));
         }
 
         protected override void OnRender(DrawingContext drawingContext)

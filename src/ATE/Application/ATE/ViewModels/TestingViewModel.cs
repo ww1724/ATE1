@@ -1,4 +1,4 @@
-﻿using ATE.Mvvm;
+﻿using ATE.Core.Mvvm;
 
 namespace ATE.ViewModels
 {

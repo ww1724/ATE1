@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ATE.Mvvm
+namespace ATE.Core.Mvvm
 {
     public interface IViewModel
     {

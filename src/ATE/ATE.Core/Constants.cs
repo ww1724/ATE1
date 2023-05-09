@@ -16,9 +16,13 @@ namespace ATE.Core
         public const string MainSideBarRegion = "Core.SideBarRegion";
 
         // main pages
-        public const string TestBoardView = "Core.TestBoard";
+        public const string TestingBoardView = "Core.TestingBoard";
 
         public const string ConsoleView = "Core.Console";
+
+
+        // stores
+        public const string MenuStore = "Core.Store.Menu";
 
         // settings
         public const string SettingsView = "Core.Dialog.Settings";

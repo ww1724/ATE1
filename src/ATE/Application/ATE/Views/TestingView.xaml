@@ -9,7 +9,7 @@
     <Grid>
         <StackPanel>
             <TextBlock Text="Testingview"/>
-            <TextBlock x:Name="urlpathtextbox"/>
+            
         </StackPanel>
     </Grid>
 </UserControl>

@@ -23,9 +23,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zoranof.UI.Wpf", "..\..\..\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ATE.UI", "ATE.UI\ATE.UI.csproj", "{514146A9-6D3D-4795-9CE2-FBC0211C3459}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ATE.Core", "ATE.Core\ATE.Core.csproj", "{E273BFE0-A42A-4C25-93BC-E68B2497377B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ATE.Core", "ATE.Core\ATE.Core.csproj", "{E273BFE0-A42A-4C25-93BC-E68B2497377B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ATE.NodeEditor", "ATE.NodeEditor\ATE.NodeEditor.csproj", "{163EF09D-BEA8-4388-8586-F6E1F3F6B725}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ATE.Graphics", "ATE.NodeEditor\ATE.Graphics.csproj", "{163EF09D-BEA8-4388-8586-F6E1F3F6B725}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
