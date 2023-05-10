@@ -11,6 +11,7 @@ namespace ATE.ViewModels
     {     
         public TestingViewModel()
         {
+            MyTitle = "Start;";
         }
 
         private string text;
@@ -27,13 +28,23 @@ namespace ATE.ViewModels
         public ObservableCollection<GraphicsItem> Items
         {
             get { return items; }
-            set { items = value; NotifyOfPropertyChange(nameof(Items)); }
+            set { items = value; NotifyOfPropertyChange(); }
         }
+
+        private string myTitle;
+
+        public string MyTitle
+        {
+            get { return myTitle; }
+            set { myTitle = value; NotifyOfPropertyChange(); }
+        }
+
 
         public void AddSomeThingToGraphicsView()
         {
             Items.Add(new GraphicsLineItem ());
             Text += "成功添加";
+            MyTitle += "你好";
         }
     }
 }

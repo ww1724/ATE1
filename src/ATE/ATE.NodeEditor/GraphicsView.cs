@@ -1,5 +1,7 @@
 ﻿using ATE.GraphicsFramework.Enums;
-using System.Runtime.CompilerServices;
+using System.Collections.ObjectModel;
+using System.DirectoryServices.ActiveDirectory;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -13,9 +15,8 @@ namespace ATE.GraphicsFramework
 
         static GraphicsView()
         {
-            IsHitTestVisibleProperty.OverrideMetadata(typeof(GraphicsView), new FrameworkPropertyMetadata(true));
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(GraphicsView), new FrameworkPropertyMetadata(typeof(GraphicsView)));
-        
+            //DefaultStyleKeyProperty.OverrideMetadata(typeof(GraphicsView), new FrameworkPropertyMetadata(typeof(GraphicsView)));
+            ListBox a;
         }
 
 
@@ -23,8 +24,24 @@ namespace ATE.GraphicsFramework
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
+
+            if (Items == null) return;
             var size = this.RenderSize;
             drawingContext.DrawRectangle(Background, new Pen(Brushes.Blue, 2), new Rect(new Point(0, 0), size));
+
+            if (Title != null)
+            {
+                double pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+                drawingContext.DrawText(new FormattedText(
+                        Title,                // 要绘制的文本
+                        CultureInfo.CurrentCulture,     // 区域信息
+                        FlowDirection.LeftToRight,      // 文本方向
+                        new Typeface("Arial"),          // 字体类型
+                        24 / pixelsPerDip,                             // 字体大小
+                        Brushes.Black,                  // 文本颜色
+                        pixelsPerDip
+                    ), new Point(0, 0));
+            }
 
 
             // 绘制框架
@@ -48,41 +65,52 @@ namespace ATE.GraphicsFramework
             
             base.OnRenderSizeChanged(sizeInfo);
         }
-        #endregion
-
-        #region Fields
-        public Alignment Alignment { get => alignment; set => alignment = value; }
-        #endregion
-
-
-        #region Property
-        public IEnumerable<GraphicsItem> Items
-        {
-            get { return (IEnumerable<GraphicsItem>)GetValue(ItemsProperty); }
-            set { SetValue(ItemsProperty, value); onItemsPropertyChanged(); }
-        }
-        public static readonly DependencyProperty ItemsProperty =
-            DependencyProperty.Register("Items", 
-                typeof(IEnumerable<GraphicsItem>), typeof(GraphicsView), 
-                new FrameworkPropertyMetadata(
-                    new List<GraphicsItem>(),
-                   onItemsPropertyChanged));
-
-        private static void onItemsPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            (d as Control).InvalidateVisual(); ;
-        }
-
-        private void onItemsPropertyChanged()
-        {
-            this.InvalidateVisual();
-        }
 
         protected override void OnMouseMove(MouseEventArgs e)
         {
             this.InvalidateVisual();
             base.OnMouseMove(e);
         }
+
+        #endregion
+
+        #region Fields
+        public Alignment Alignment { get => alignment; set => alignment = value; }
+        #endregion
+
+        #region Property
+        public ObservableCollection<GraphicsItem> Items
+        {
+            get { return (ObservableCollection<GraphicsItem>)GetValue(ItemsProperty); }
+            set { SetValue(ItemsProperty, value); }
+        }
+
+        public static readonly DependencyProperty ItemsProperty =
+            DependencyProperty.Register("Items",
+                typeof(ObservableCollection<GraphicsItem>), 
+                typeof(GraphicsView),
+                new PropertyMetadata(
+                    new ObservableCollection<GraphicsItem>(),
+                    OnItemsPropertyChanged));
+
+        private static void OnItemsPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            (d as Control).InvalidateVisual(); ;
+        }
+
+
+        /// <summary>
+        /// Title
+        /// </summary>
+        public string Title
+        {
+            get { return (string)GetValue(TitleProperty); }
+            set { SetValue(TitleProperty, value); InvalidateVisual(); }
+        }
+
+        public static readonly DependencyProperty TitleProperty =
+            //DependencyProperty.Register("Title", typeof(string), typeof(GraphicsView), new FrameworkPropertyMetadata("你好",  FrameworkPropertyMetadataOptions.AffectsRender));
+            DependencyProperty.Register("Title", typeof(string), typeof(GraphicsView), new FrameworkPropertyMetadata("你好"));
         #endregion
 
 

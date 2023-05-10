@@ -3,9 +3,11 @@
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-	  <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
-
+  <ItemGroup>
+    <ProjectReference Include="..\ATE.NodeEditor\ATE.GraphicsFramework.csproj" />
+  </ItemGroup>
 
 </Project>
