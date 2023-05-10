@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Zoranof.UI.Wpf\src\Zoranof.UI.Wpf\Zoranof.UI.Wpf.csproj" />
+    <ProjectReference Include="..\..\ATE.NodeEditor\ATE.GraphicsFramework.csproj" />
     <ProjectReference Include="..\..\ATE.UI\ATE.UI.csproj" />
     <ProjectReference Include="..\..\Services\ATE.IService\ATE.IService.csproj" />
     <ProjectReference Include="..\..\Services\ATE.Service\ATE.Service.csproj" />

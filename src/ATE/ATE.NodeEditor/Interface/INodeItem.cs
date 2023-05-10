@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
-namespace ATE.NodeEditor.Interface
+namespace ATE.GraphicsFramework.Interface
 {
     public interface INodeItem
     {

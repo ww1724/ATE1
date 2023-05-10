@@ -3,13 +3,21 @@
           xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-          xmlns:views="clr-namespace:ATE.Views"
+          xmlns:cm="http://www.caliburnproject.org"
+          xmlns:graphics="clr-namespace:ATE.GraphicsFramework;assembly=ATE.GraphicsFramework"
+          xmlns:views="clr-namespace:ATE.Views" xmlns:viewmodels="clr-namespace:ATE.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:TestingViewModel}"
           mc:Ignorable="d" 
           d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <StackPanel>
-            <TextBlock Text="Testingview"/>
-            
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="{Binding Text, FallbackValue=nihao}"  />
+            <Button Content="添加随机Item" cm:Message.Attach="AddSomeThingToGraphicsView"/>
         </StackPanel>
+        <graphics:GraphicsView x:Name="GraphicsView" Background="Blue" Grid.Row="1" Items="{Binding Items}"/>
+
     </Grid>
 </UserControl>

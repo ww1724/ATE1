@@ -1,15 +1,10 @@
-﻿using ATE.Graphics.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ATE.GraphicsFramework.Enums;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-namespace ATE.NodeEditor
+namespace ATE.GraphicsFramework
 {
     public abstract class GraphicsItem
     {
@@ -21,7 +16,7 @@ namespace ATE.NodeEditor
         private List<GraphicsItem> childItems;
         private Dictionary<string, object> metaData;
         private object data;
-        private Graphics.Enums.CacheMode cacheMode;
+        private Enums.CacheMode cacheMode;
         private double opacity;
         private Cursor cursor;
         private bool grabMouse;
@@ -32,7 +27,6 @@ namespace ATE.NodeEditor
         private int rotation;
         private double scale;
         #endregion
-
 
         #region Options
         /// <summary>
@@ -53,7 +47,7 @@ namespace ATE.NodeEditor
         /// <summary>
         /// 缓冲模式
         /// </summary>
-        public Graphics.Enums.CacheMode CacheMode { get => cacheMode; set => cacheMode = value; }
+        public GraphicsFramework.Enums.CacheMode CacheMode { get => cacheMode; set => cacheMode = value; }
 
         /// <summary>
         /// 抓取所有鼠标事件
@@ -118,30 +112,42 @@ namespace ATE.NodeEditor
         public Point Pos { get => pos; set => pos = value; }
         #endregion
 
-
-
-
         #region Functions
         public Rect BoundingRegion() => boundingRect;
 
         public Rect SceneBoundingRect () => boundingRect;
 
-        public abstract bool IsCollidesWithItem(GraphicsItem item, ItemSelectionMode mode = ItemSelectionMode.IntersectsItemShape);
+        protected internal virtual bool IsCollidesWithItem(GraphicsItem item, ItemSelectionMode mode = ItemSelectionMode.IntersectsItemShape) { return true; }
 
-        public abstract IList<GraphicsItem> CollidesItems(ItemSelectionMode mode);
+        protected internal virtual IList<GraphicsItem> CollidesItems(ItemSelectionMode mode) { return null; }
 
-        public abstract bool IsContainsPoint(Point point);
+        protected internal virtual bool IsContainsPoint(Point point) { return false; } 
 
-        public abstract void EnsureVisible();
+        protected internal virtual void EnsureVisible() { }
 
-        public abstract Point MapToScene(Point point);
-        public abstract Rect MapToScene(Rect rect);
-        public abstract Path MapToScene(Path path);
-        public abstract Polygon MapToScene(Polygon Polygon);
+        protected internal virtual Point MapToScene(Point point) { return new Point(); }
+        protected internal virtual Rect MapToScene(Rect rect) { return new Rect();  }
+        protected internal virtual Path MapToScene(Path path) { return new Path(); }
+        protected internal virtual Polygon MapToScene(Polygon Polygon) { return new Polygon(); }
 
-        public abstract void OnRender(DrawingContext drawingContext);
         #endregion
 
+        #region Events
+        protected internal virtual void OnRender(DrawingContext drawingContext) { }
 
+        protected internal virtual void OnMouseEnter(EventArgs args) { }
+        protected internal virtual void OnMouseExit(EventArgs args) { }
+        protected internal virtual void OnMouseMove(EventArgs args) { }
+        protected internal virtual void OnMouseDown(EventArgs args) { }
+        protected internal virtual void OnMouseUp(EventArgs args) { }
+
+        protected internal virtual void OnDrop(EventArgs args) { }
+
+        protected internal virtual void OnKeyUp(EventArgs args) { }
+        protected internal virtual void OnKeyDown(EventArgs args) { }
+
+        protected internal virtual void OnMove(EventArgs args) { }
+        protected internal virtual void OnResize(EventArgs args) { }
+        #endregion
     }
 }
