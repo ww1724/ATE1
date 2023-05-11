@@ -7,7 +7,7 @@
         xmlns:ccontrols="clr-namespace:ATE.Controls"
         xmlns:helpers="clr-namespace:Zoranof.UI.Wpf.Helpers;assembly=Zoranof.UI.Wpf"
         Title="MainWindow" Height="600" Width="1200"
-        WindowState="Maximized">
+        WindowState="Normal">
 
     <WindowChrome.WindowChrome>
         <WindowChrome  WindowChrome.ResizeBorderThickness="5"

@@ -7,7 +7,7 @@ using System.Windows.Shapes;
 
 namespace ATE.GraphicsFramework
 {
-    public abstract class GraphicsItem
+    public abstract class GraphicsItem : IScaled
     {
         #region Private Member
         private bool acceptDrops;
@@ -43,6 +43,15 @@ namespace ATE.GraphicsFramework
         }
 
         public GraphicsView AttachedView { get; set; }
+
+        #region General Slots
+        public virtual void MoveTo(Point target) { Pos = target; }
+
+        public virtual void MoveWithOssfet(Vector offset) 
+        { 
+            Pos = new Point(Pos.X + offset.X, Pos.Y +  offset.Y);
+        }
+        #endregion
 
 
         #region Options
@@ -149,6 +158,8 @@ namespace ATE.GraphicsFramework
         public bool IsDragging { get => isDragging; set => isDragging = value; }
 
         public Point DraggingStartPos { get => draggingStartPos; set => draggingStartPos = value; }
+        
+        public int Scalage { get; set; }
 
 
         #endregion
@@ -177,14 +188,13 @@ namespace ATE.GraphicsFramework
         #endregion
 
         #region Events
-        protected internal virtual void OnRender(DrawingContext drawingContext) {
-        
-        }
+        protected internal virtual void OnRender(DrawingContext drawingContext) { }
 
         protected internal virtual void OnMouseEnter(MouseEventArgs args)
         {
             IsMouseCaptured = true;
         }
+
         protected internal virtual void OnMouseExit(MouseEventArgs args)
         {
             isMouseCaptured = false;

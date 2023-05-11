@@ -45,30 +45,16 @@ namespace ATE.GraphicsFramework.GraphicsBaseItems
             BoundingRect = new Rect(Pos.X, Pos.Y, Width, Height);
         }
 
-        //public GraphicsLineItem(Line line, GraphicsItem parent = null)
-        //{
-        //    Width = 100;
-        //    Height = 100;
-        //    Pos = new Point(0, 0);
-
-        //    ParentItem = parent;
-        //}
-
-        //public GraphicsLineItem(double x1, double y1, double x2, double y2, GraphicsItem parent = null)
-        //{
-        //    StartPoint= new Point(x1, y1);
-        //    EndPoint = new Point(x2, y2);
-        //    Width = Math.Abs(x2 - x1);
-        //    Height = Math.Abs(y2 - y1) ;
-
-        //    BoundingRect = new Rect(Pos.X, Pos.Y, Width, Height);
-        //}
 
         protected internal override void OnRender(DrawingContext drawingContext)
         {
 
             // 框架绘制
-            drawingContext.DrawRectangle(IsSelected ? Brushes.Aqua : Brushes.White, new Pen(LineColor, 2), BoundingRect);
+            if (IsSelected)
+            {
+                drawingContext.DrawRectangle(Brushes.Pink, new Pen(Brushes.Green, 2), BoundingRect);
+            }
+            //drawingContext.DrawRectangle(IsSelected ? Brushes.Aqua : Brushes.White, new Pen(LineColor, 2), BoundingRect);
 
             drawingContext.PushTransform(new TranslateTransform(Pos.X, Pos.Y));
             drawingContext.DrawLine(new Pen(lineColor, 2), StartPoint, EndPoint);
