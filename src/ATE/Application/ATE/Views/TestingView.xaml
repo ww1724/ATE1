@@ -17,7 +17,7 @@
             <TextBlock Text="{Binding Text, FallbackValue=nihao}"  />
             <Button Content="添加随机Item" cm:Message.Attach="AddSomeThingToGraphicsView"/>
         </StackPanel>
-        <graphics:GraphicsView x:Name="GraphicsView" Background="Blue" Grid.Row="1" Items="{Binding Items}" Title="{Binding MyTitle}"/>
+        <graphics:GraphicsView x:Name="GraphicsView"  Grid.Row="1" Items="{Binding Items}" Title="{Binding MyTitle}" Background="#fefefe"/>
         
     </Grid>
 </UserControl>

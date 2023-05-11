@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>net6.0-windows10.0.17763</TargetFramework>
     <Nullable>disable</Nullable>
     <UseWPF>true</UseWPF>
@@ -27,7 +27,6 @@
     <ProjectReference Include="..\..\ATE.UI\ATE.UI.csproj" />
     <ProjectReference Include="..\..\Services\ATE.IService\ATE.IService.csproj" />
     <ProjectReference Include="..\..\Services\ATE.Service\ATE.Service.csproj" />
-    <ProjectReference Include="..\..\Zoranof.GraphicsFramework.WorkFlow\Zoranof.GraphicsFramework.WorkFlow.csproj" />
   </ItemGroup>
 
   <ItemGroup>
