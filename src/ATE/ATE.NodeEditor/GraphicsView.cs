@@ -294,16 +294,18 @@ namespace ATE.GraphicsFramework
             // 左键按下 => 选择元素 || 准备移动元素 || 准备框选元素
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-
-
-
                 // 按下鼠标时鼠标下有元素 => 选择Items
                 if (toSelectItems.Count > 0)
                 {
-                    // 根据Ctrl按键状态选择元素
-                    if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
-                        this.SelectItemsIS(toSelectItems);
-                    else this.SelectItemsAS(toSelectItems);
+
+                    if (!toSelectItems.Any(x => x.IsSelected))
+                    {
+                        // 根据Ctrl按键状态选择元素
+                        if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+                            this.SelectItemsIS(toSelectItems);
+                        else this.SelectItemsAS(toSelectItems);
+                    }
+
 
 
                     // 准备移动元素
