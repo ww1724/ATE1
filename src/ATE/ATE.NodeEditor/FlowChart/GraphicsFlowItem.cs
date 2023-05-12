@@ -3,18 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Media;
-using Zoranof.GraphicsFramework;
 
-namespace Zoranof.WorkFlow
+namespace Zoranof.GraphicsFramework.FlowChart
 {
-    public class WorkFlowCanvas : GraphicsView
+    public class GraphicsFlowItem : GraphicsFlowItemBase
     {
-        protected override void OnRender(DrawingContext drawingContext)
+        protected internal override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
-
-            
         }
     }
 }

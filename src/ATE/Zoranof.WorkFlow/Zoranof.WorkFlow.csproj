@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ATE.NodeEditor\ATE.GraphicsFramework.csproj" />
+    <ProjectReference Include="..\ATE.NodeEditor\Zoranof.GraphicsFramework.csproj" />
   </ItemGroup>
 
 </Project>

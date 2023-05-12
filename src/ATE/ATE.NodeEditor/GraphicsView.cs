@@ -1,14 +1,13 @@
-﻿using ATE.GraphicsFramework.Enums;
-using ATE.GraphicsFramework.Events;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.DirectoryServices.ActiveDirectory;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using Zoranof.GraphicsFramework.Common;
 
-namespace ATE.GraphicsFramework
+namespace Zoranof.GraphicsFramework
 {
     public class GraphicsView : Control
     {
@@ -46,7 +45,7 @@ namespace ATE.GraphicsFramework
         /// <param name="items"></param>
         protected virtual void SelectItemsAS(ICollection<GraphicsItem> items)
         {
-            foreach(GraphicsItem item in Items)
+            foreach (GraphicsItem item in Items)
             {
                 item.IsSelected = false;
             }
@@ -59,7 +58,7 @@ namespace ATE.GraphicsFramework
                 item.IsSelected = true;
             }
 
-            this.OnSelectedChanged(new GraphicsViewEventArgs(items.FirstOrDefault()));
+            OnSelectedChanged(new GraphicsViewEventArgs(items.FirstOrDefault()));
             InvalidateVisual();
         }
 
@@ -78,7 +77,7 @@ namespace ATE.GraphicsFramework
                 item.IsSelected = true;
             }
 
-            this.OnSelectedChanged(new GraphicsViewEventArgs(items.FirstOrDefault()));
+            OnSelectedChanged(new GraphicsViewEventArgs(items.FirstOrDefault()));
             InvalidateVisual();
         }
 
@@ -109,9 +108,9 @@ namespace ATE.GraphicsFramework
         /// <summary> 框选动作 </summary>
         /// <description> 取消之前的选中, 选中当前框选 </description>
         /// <param name="selectedBoxRect">当前选框的rect</param>
-        protected virtual void ToBoxSelect(Rect selectedBoxRect) 
+        protected virtual void ToBoxSelect(Rect selectedBoxRect)
         {
-            
+
             m_isAnySelected = false;
             ICollection<GraphicsItem> toSelectItems = new Collection<GraphicsItem>();
             foreach (var item in Items)
@@ -122,17 +121,18 @@ namespace ATE.GraphicsFramework
 
             if (toSelectItems.Count > 0)
             {
-                if (Keyboard.IsKeyDown(Key.LeftCtrl)  || Keyboard.IsKeyDown(Key.RightCtrl))
+                if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
                 {
-                    this.SelectItemsIS(toSelectItems);
-                } else
+                    SelectItemsIS(toSelectItems);
+                }
+                else
                 {
-                    this.SelectItemsAS(toSelectItems);
+                    SelectItemsAS(toSelectItems);
 
                 }
                 m_isAnySelected = true;
             }
-            this.InvalidateVisual(); 
+            InvalidateVisual();
         }
 
         /// <summary>
@@ -148,11 +148,11 @@ namespace ATE.GraphicsFramework
 
         protected virtual void MoveSelectedItemsWithOffset(Vector offset)
         {
-           var toMoveItems = (ICollection<GraphicsItem>)Items.Where(x => x.IsSelected == true).ToList();
+            var toMoveItems = (ICollection<GraphicsItem>)Items.Where(x => x.IsSelected == true).ToList();
             MoveItemsWithOffset(toMoveItems, offset);
         }
 
-        protected virtual void MoveItemsTo(ICollection<GraphicsItem> items, Point target) 
+        protected virtual void MoveItemsTo(ICollection<GraphicsItem> items, Point target)
         {
             if (items.Count == 0) return;
 
@@ -161,7 +161,7 @@ namespace ATE.GraphicsFramework
                 item.MoveTo(target);
             }
 
-            this.InvalidateVisual();
+            InvalidateVisual();
 
         }
 
@@ -169,7 +169,7 @@ namespace ATE.GraphicsFramework
         {
             Console.WriteLine("Move Items With Offset: " + Convert.ToString(offset.X) + "-" + Convert.ToString(offset.Y));
             if (items.Count == 0) return;
-            foreach(var item in items)
+            foreach (var item in items)
             {
                 item.MoveWithOssfet(offset);
             }
@@ -191,7 +191,7 @@ namespace ATE.GraphicsFramework
         public double Scalage { get => scalage; set => scalage = value; }
 
         public Vector ViewerOffset { get; set; }
-        
+
         #endregion
 
         #region Property
@@ -227,17 +227,18 @@ namespace ATE.GraphicsFramework
             DependencyProperty.Register("Title", typeof(string), typeof(GraphicsView), new FrameworkPropertyMetadata("你好", FrameworkPropertyMetadataOptions.AffectsRender));
 
         #endregion
-        
+
         #region Events
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
+
+
             if (Items != null)
                 foreach (var item in Items)
                     item.AttachedView ??= this;
             // 容器框架绘制
-
-            var size = this.RenderSize;
+            var size = RenderSize;
             drawingContext.DrawRectangle(Background, new Pen(Brushes.Blue, 2), new Rect(new Point(0, 0), size));
 
             if (Title != null)
@@ -302,8 +303,8 @@ namespace ATE.GraphicsFramework
                     {
                         // 根据Ctrl按键状态选择元素
                         if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
-                            this.SelectItemsIS(toSelectItems);
-                        else this.SelectItemsAS(toSelectItems);
+                            SelectItemsIS(toSelectItems);
+                        else SelectItemsAS(toSelectItems);
                     }
 
 
@@ -328,8 +329,8 @@ namespace ATE.GraphicsFramework
             }
 
             // 滚轮按下
-            if (e.MiddleButton == MouseButtonState.Pressed) 
-            { 
+            if (e.MiddleButton == MouseButtonState.Pressed)
+            {
                 m_isReadyToMoveViewer = true;
                 m_viewerMoveStartPoint = e.GetPosition(this);
                 m_viewerMoveEndPoint = e.GetPosition(this);
@@ -373,6 +374,7 @@ namespace ATE.GraphicsFramework
                 m_isReadyToBoxSelect = false;
                 m_boxSelectStartPoint = new Point(0, 0);
                 m_boxSelectEndPoint = new Point(0, 0);
+                InvalidateVisual();
             }
             base.OnMouseLeave(e);
         }
@@ -392,7 +394,7 @@ namespace ATE.GraphicsFramework
             if (m_isReadyToMoveSelectedItems)
             {
                 m_moveItemsEndPoint = e.GetPosition(this);
-                this.MoveSelectedItemsWithOffset( new Vector( 
+                MoveSelectedItemsWithOffset(new Vector(
                     m_moveItemsEndPoint.X - m_moveItemsStartPoint.X,
                     m_moveItemsEndPoint.Y - m_moveItemsStartPoint.Y));
                 m_moveItemsStartPoint = m_moveItemsEndPoint;
@@ -407,7 +409,7 @@ namespace ATE.GraphicsFramework
             {
                 double zoom = e.Delta > 0 ? 1.1 : 0.9;
                 Scalage = zoom * Scalage;
-                this.InvalidateVisual();
+                InvalidateVisual();
             }
 
 
@@ -424,15 +426,15 @@ namespace ATE.GraphicsFramework
         public event EventHandler ViewerMoved;
         public event EventHandler BoxSelectChanged;
 
-        protected virtual void OnViewScaled(GraphicsViewEventArgs e) => ViewScaled?.Invoke(this, e); 
+        protected virtual void OnViewScaled(GraphicsViewEventArgs e) => ViewScaled?.Invoke(this, e);
 
-        protected virtual void OnSelectedChanged(GraphicsViewEventArgs e) => SelectedChanged?.Invoke(this, e); 
+        protected virtual void OnSelectedChanged(GraphicsViewEventArgs e) => SelectedChanged?.Invoke(this, e);
 
-        protected virtual void OnHoveredChanged(GraphicsViewEventArgs e) => HoveredChanged?.Invoke(this, e); 
+        protected virtual void OnHoveredChanged(GraphicsViewEventArgs e) => HoveredChanged?.Invoke(this, e);
 
-        protected virtual void OnItemAdded(GraphicsViewEventArgs e) => ItemAdded?.Invoke(this, e); 
+        protected virtual void OnItemAdded(GraphicsViewEventArgs e) => ItemAdded?.Invoke(this, e);
 
-        protected virtual void OnItemRemoved(GraphicsViewEventArgs e) => ItemRemoved?.Invoke(this, e); 
+        protected virtual void OnItemRemoved(GraphicsViewEventArgs e) => ItemRemoved?.Invoke(this, e);
 
         protected virtual void OnViewerMoved(GraphicsViewEventArgs e) => ViewerMoved?.Invoke(this, e);
 

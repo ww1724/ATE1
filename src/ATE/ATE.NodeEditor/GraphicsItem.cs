@@ -1,11 +1,11 @@
-﻿using ATE.GraphicsFramework.Enums;
-using ATE.GraphicsFramework.Interface;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using Zoranof.GraphicsFramework.Common;
+using Zoranof.GraphicsFramework.Common.Interface;
 
-namespace ATE.GraphicsFramework
+namespace Zoranof.GraphicsFramework
 {
     public abstract class GraphicsItem : IScaled
     {
@@ -17,7 +17,7 @@ namespace ATE.GraphicsFramework
         private List<GraphicsItem> childItems;
         private Dictionary<string, object> metaData;
         private object data;
-        private Enums.CacheMode cacheMode;
+        private Common.CacheMode cacheMode;
         private double opacity;
         private Cursor cursor;
         private bool grabMouse;
@@ -47,9 +47,9 @@ namespace ATE.GraphicsFramework
         #region General Slots
         public virtual void MoveTo(Point target) { Pos = target; }
 
-        public virtual void MoveWithOssfet(Vector offset) 
-        { 
-            Pos = new Point(Pos.X + offset.X, Pos.Y +  offset.Y);
+        public virtual void MoveWithOssfet(Vector offset)
+        {
+            Pos = new Point(Pos.X + offset.X, Pos.Y + offset.Y);
         }
         #endregion
 
@@ -73,7 +73,7 @@ namespace ATE.GraphicsFramework
         /// <summary>
         /// 缓冲模式
         /// </summary>
-        public GraphicsFramework.Enums.CacheMode CacheMode { get => cacheMode; set => cacheMode = value; }
+        public Common.CacheMode CacheMode { get => cacheMode; set => cacheMode = value; }
 
         /// <summary>
         /// 抓取所有鼠标事件
@@ -158,7 +158,7 @@ namespace ATE.GraphicsFramework
         public bool IsDragging { get => isDragging; set => isDragging = value; }
 
         public Point DraggingStartPos { get => draggingStartPos; set => draggingStartPos = value; }
-        
+
         public int Scalage { get; set; }
 
 
@@ -182,7 +182,8 @@ namespace ATE.GraphicsFramework
         protected internal virtual Path MapToScene(Path path) { return new Path(); }
         protected internal virtual Polygon MapToScene(Polygon Polygon) { return new Polygon(); }
 
-        protected void Update() { 
+        protected void Update()
+        {
             AttachedView.InvalidateVisual();
         }
         #endregion
@@ -226,7 +227,8 @@ namespace ATE.GraphicsFramework
             }
 
         }
-        protected internal virtual void OnMouseUp(EventArgs args) {
+        protected internal virtual void OnMouseUp(EventArgs args)
+        {
             isDragging = false;
             Update();
         }

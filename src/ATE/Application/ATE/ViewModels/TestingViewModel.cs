@@ -1,11 +1,11 @@
 ﻿using ATE.Core.Mvvm;
-using ATE.GraphicsFramework;
-using ATE.GraphicsFramework.GraphicsBaseItems;
 using Caliburn.Micro;
 using System;
 using System.Collections.ObjectModel;
-using System.Windows.Controls;
 using System.Windows.Threading;
+using Zoranof.GraphicsFramework;
+using Zoranof.GraphicsFramework.GraphicsBaseItems;
+using Zoranof.WorkFlow;
 
 namespace ATE.ViewModels
 {
@@ -14,13 +14,13 @@ namespace ATE.ViewModels
         DispatcherTimer DispatcherTimer;
         public TestingViewModel()
         {
-            MyTitle = "Start;";
+            MyTitle = "Start";
             DispatcherTimer = new DispatcherTimer()
             {
                 Interval = TimeSpan.FromMilliseconds(500)
             };
 
-            DispatcherTimer.Tick += (object? sender, EventArgs e) =>
+            DispatcherTimer.Tick += (object sender, EventArgs e) =>
             {
                 AddSomeThingToGraphicsView();
             };
@@ -55,13 +55,7 @@ namespace ATE.ViewModels
 
         public void AddSomeThingToGraphicsView()
         {
-            Items.Add(new GraphicsLineItem () { Pos = new System.Windows.Point((new Random().Next(0, 500)), (new Random().Next(0, 500))) });
-            //Items.Add(new GraphicsLineItem () { Pos = new System.Windows.Point((new Random().Next(0, 500)), (new Random().Next(0, 500))) });
-            //Items.Add(new GraphicsLineItem () { Pos = new System.Windows.Point((new Random().Next(0, 500)), (new Random().Next(0, 500))) });
-            //Items.Add(new GraphicsLineItem () { Pos = new System.Windows.Point((new Random().Next(0, 500)), (new Random().Next(0, 500))) });
-            //Items.Add(new GraphicsLineItem () { Pos = new System.Windows.Point((new Random().Next(0, 500)), (new Random().Next(0, 500))) });
-            //Items.Add(new GraphicsLineItem () { Pos = new System.Windows.Point((new Random().Next(0, 500)), (new Random().Next(0, 500))) });
-            Text = "成功添加";
+            Items.Add(new WorkflowGraphicsItemBase{ Pos = new System.Windows.Point((new Random().Next(0, 500)), (new Random().Next(0, 500))) });
             MyTitle += " ";
         }
     }

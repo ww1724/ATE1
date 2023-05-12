@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ATE.GraphicsFramework.Enums
+namespace Zoranof.GraphicsFramework.Common.Interface
 {
-    public enum CacheMode
+    public interface IScaled
     {
-        NoCache, ItemCoordinateCache, DeviceCoordinateCache
+        public int Scalage { get; set; }
     }
 }

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ATE.GraphicsFramework.DataStructure
+namespace Zoranof.GraphicsFramework.FlowChart
 {
-    public class Line
+    public class GraphicsFlowItemBase : LinkedGraphicsItem
     {
     }
 }

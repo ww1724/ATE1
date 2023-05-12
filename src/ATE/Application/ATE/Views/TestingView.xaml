@@ -4,7 +4,7 @@
           xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
           xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
           xmlns:cm="http://www.caliburnproject.org"
-          xmlns:graphics="clr-namespace:ATE.GraphicsFramework;assembly=ATE.GraphicsFramework"
+          xmlns:workflow="clr-namespace:Zoranof.WorkFlow;assembly=Zoranof.WorkFlow"
           xmlns:views="clr-namespace:ATE.Views" xmlns:viewmodels="clr-namespace:ATE.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:TestingViewModel}"
           mc:Ignorable="d" 
           d:DesignHeight="450" d:DesignWidth="800">
@@ -17,7 +17,7 @@
             <TextBlock Text="{Binding Text, FallbackValue=nihao}"  />
             <Button Content="添加随机Item" cm:Message.Attach="AddSomeThingToGraphicsView"/>
         </StackPanel>
-        <graphics:GraphicsView x:Name="GraphicsView"  Grid.Row="1" Items="{Binding Items}" Title="{Binding MyTitle}" Background="#fefefe"/>
+        <workflow:WorkFlowEditor x:Name="GraphicsView"  Grid.Row="1" Items="{Binding Items}" Title="{Binding MyTitle}" Background="#fefefe"/>
         
     </Grid>
 </UserControl>

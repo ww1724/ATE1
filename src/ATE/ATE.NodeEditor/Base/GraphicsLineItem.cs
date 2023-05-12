@@ -1,9 +1,8 @@
-﻿using ATE.GraphicsFramework.DataStructure;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace ATE.GraphicsFramework.GraphicsBaseItems
+namespace Zoranof.GraphicsFramework.GraphicsBaseItems
 {
     public class GraphicsLineItem : GraphicsItem
     {
@@ -62,21 +61,21 @@ namespace ATE.GraphicsFramework.GraphicsBaseItems
             base.OnRender(drawingContext);
         }
 
-        protected internal override void OnMouseEnter(MouseEventArgs args)
-        {
-            
-            lineColor = Brushes.Black;
-            Update();
-            base.OnMouseEnter(args);
-        }
+        //protected internal override void OnMouseEnter(MouseEventArgs args)
+        //{
 
-        protected internal override void OnMouseExit(MouseEventArgs args)
-        {
-            
+        //    lineColor = Brushes.Black;
+        //    Update();
+        //    base.OnMouseEnter(args);
+        //}
 
-            lineColor = Brushes.Red;
-            Update();
-            base.OnMouseExit(args);
-        }
+        //protected internal override void OnMouseExit(MouseEventArgs args)
+        //{
+
+
+        //    lineColor = Brushes.Red;
+        //    Update();
+        //    base.OnMouseExit(args);
+        //}
     }
 }

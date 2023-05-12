@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Zoranof.GraphicsFramework.WorkFlow
+namespace Zoranof.WorkFlow
 {
-    public class WorkFlowEOperatingBoard : WorkFlowCanvas
+    public class WorkFlowOperatingBoard : WorkFlowCanvas
     {
-        public WorkFlowEOperatingBoard()
+        public WorkFlowOperatingBoard()
         {
         }
     }

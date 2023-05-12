@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ATE.GraphicsFramework
+namespace Zoranof.GraphicsFramework
 {
     public class GraphicsScene
     {
