@@ -55,8 +55,7 @@ namespace ATE.ViewModels
 
         public void AddSomeThingToGraphicsView()
         {
-            Items.Add(new WorkflowGraphicsItemBase{ Pos = new System.Windows.Point((new Random().Next(0, 500)), (new Random().Next(0, 500))) });
-            MyTitle += " ";
+            Items.Add(new WorkflowItemBase{ Pos = new System.Windows.Point((new Random().Next(0, 500)), (new Random().Next(0, 500))) });
         }
     }
 }

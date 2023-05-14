@@ -1,29 +1,42 @@
 ﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.DirectoryServices.ActiveDirectory;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Navigation;
 using Zoranof.GraphicsFramework.Common;
 
 namespace Zoranof.GraphicsFramework
 {
     public class GraphicsView : Control
     {
-        private Alignment alignment;
-        private double scalage;
-
 
         public GraphicsView()
         {
-            Scalage = 1;
+            ViewerScale = 1;
             ClipToBounds = true;
+            ViewerLocation = new Point(0, 0);
+            Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FEFCFB"));
         }
+
+
+
+        #region Fields
+        public bool IsDragging { get; set; }
+
+        public Alignment Alignment { get; set; }
+
+        public double ViewerScale { get; set; }
+
+        public Point ViewerLocation { get; set; }
+        #endregion
 
         #region Variables
         private bool m_isAnySelected;
-        //private bool m_isReadyToMoveItems;
 
         private bool m_isReadyToBoxSelect;
         private Point m_boxSelectStartPoint;
@@ -115,7 +128,9 @@ namespace Zoranof.GraphicsFramework
             ICollection<GraphicsItem> toSelectItems = new Collection<GraphicsItem>();
             foreach (var item in Items)
             {
-                if (item.BoundingRect.IntersectsWith(selectedBoxRect))
+                Rect itemRectInViewer = RectMapToViewer(item.BoundingRect);
+
+                if (itemRectInViewer.IntersectsWith(selectedBoxRect))
                     toSelectItems.Add(item);
             }
 
@@ -148,6 +163,7 @@ namespace Zoranof.GraphicsFramework
 
         protected virtual void MoveSelectedItemsWithOffset(Vector offset)
         {
+            offset = OffsetMapToControl(offset);
             var toMoveItems = (ICollection<GraphicsItem>)Items.Where(x => x.IsSelected == true).ToList();
             MoveItemsWithOffset(toMoveItems, offset);
         }
@@ -176,25 +192,97 @@ namespace Zoranof.GraphicsFramework
             InvalidateVisual();
         }
         /// <summary>
-        /// 元素坐标转换到视图坐标
+        /// 物理坐标转换到视图坐标
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
-        protected virtual Point PointMapToViewer(Point point) => point;
+        protected virtual Point PointMapToViewer(Point point) => new Point(
+            point.X * ViewerScale + ViewerLocation.X,
+            point.Y * ViewerScale + ViewerLocation.Y
+            );
+
+        protected virtual Rect RectMapToViewer(Rect rect) => new Rect(
+                    rect.X * ViewerScale + ViewerLocation.X,
+                    rect.Y * ViewerScale + ViewerLocation.Y,
+                    rect.Width * ViewerScale,
+                    rect.Height * ViewerScale);
+
+        protected virtual Vector OffsetMapToControl(Vector offset) => new Vector(
+                    offset.X / ViewerScale + ViewerLocation.X,
+                    offset.Y / ViewerScale + ViewerLocation.Y);
+
+        /// <summary>
+        /// 移动画布
+        /// </summary>
+        /// <param name="point"></param>
+        protected virtual void MoveViewerTo(Point point) {
+            ViewerLocation = point;
+            this.InvalidateVisual();
+        }
+
+        /// <summary>
+        /// 通过偏移移动画布
+        /// </summary>
+        /// <param name="offset"></param>
+        protected virtual void MoveViewerWithOffset(Vector offset) {
+            ViewerLocation = new Point(ViewerLocation.X + offset.X, ViewerLocation.Y + offset.Y);
+            Console.WriteLine("Move Viewer With Offset: " + Convert.ToString(offset.X) + "-" + Convert.ToString(offset.Y));
+            this.InvalidateVisual();
+        }
+        
         #endregion
 
-        #region Fields
-        public bool IsDragging { get; set; }
+        #region Public Slots
+        /// <summary>
+        /// 是否碰撞
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="mode"></param>
+        /// <returns></returns>
+        protected internal virtual bool IsCollidesWithItem(GraphicsItem a, GraphicsItem b, ItemSelectionMode mode = ItemSelectionMode.IntersectsItemShape) { return true; }
 
-        public Alignment Alignment { get => alignment; set => alignment = value; }
+        /// <summary>
+        /// 获取所有碰撞Items
+        /// </summary>
+        /// <param name="mode"></param>
+        /// <returns></returns>
+        protected internal virtual IList<GraphicsItem> CollidesItems(GraphicsItem a, ItemSelectionMode mode) { return null; }
 
-        public double Scalage { get => scalage; set => scalage = value; }
+        /// <summary>
+        /// Item是否包含点
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        protected internal virtual bool IsContainsPoint(GraphicsItem a, Point point) { return false; }
 
-        public Vector ViewerOffset { get; set; }
+        /// <summary>
+        /// 确保Item可见
+        /// </summary>
+        protected internal virtual void EnsureVisible(GraphicsItem item) { }
 
+        /// <summary>
+        /// 确保Items可见
+        /// </summary>
+        protected internal virtual void EnsureVisible(ICollection<GraphicsItem> items) { }
         #endregion
 
-        #region Property
+
+        #region Propertys
+        public FontFamily Font
+        {
+            get { return (FontFamily)GetValue(FontProperty); }
+            set { SetValue(FontProperty, value); }
+        }
+
+        public static readonly DependencyProperty FontProperty =
+            DependencyProperty.Register(
+                "Font", 
+                typeof(FontFamily), 
+                typeof(GraphicsView), 
+                new FrameworkPropertyMetadata(new FontFamily("Simsun"), FrameworkPropertyMetadataOptions.AffectsRender));
+
+
+
         public ObservableCollection<GraphicsItem> Items
         {
             get { return (ObservableCollection<GraphicsItem>)GetValue(ItemsProperty); }
@@ -205,26 +293,31 @@ namespace Zoranof.GraphicsFramework
             DependencyProperty.Register("Items",
                 typeof(ObservableCollection<GraphicsItem>),
                 typeof(GraphicsView),
-                new PropertyMetadata(
-                    null,
-                    OnItemsPropertyChanged));
+                new FrameworkPropertyMetadata(null, OnItemsPropertyChanged));
 
         private static void OnItemsPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            (d as Control).InvalidateVisual(); ;
+            var view = d as GraphicsView;
+
+            if (e.OldValue != null)
+            {
+                var oldItems = e.OldValue as ObservableCollection<GraphicsItem>;
+                oldItems.CollectionChanged -= view.OnItemsCollectionChanged;
+            }
+
+            if (e.NewValue != null)
+            {
+                var newItems = e.NewValue as ObservableCollection<GraphicsItem>;
+                newItems.CollectionChanged += view.OnItemsCollectionChanged;
+            }
+
         }
 
-        /// <summary>
-        /// Title
-        /// </summary>
-        public string Title
+        private void OnItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            get { return (string)GetValue(TitleProperty); }
-            set { SetValue(TitleProperty, value); }
+            InvalidateVisual();
         }
 
-        public static readonly DependencyProperty TitleProperty =
-            DependencyProperty.Register("Title", typeof(string), typeof(GraphicsView), new FrameworkPropertyMetadata("你好", FrameworkPropertyMetadataOptions.AffectsRender));
 
         #endregion
 
@@ -233,31 +326,19 @@ namespace Zoranof.GraphicsFramework
         {
             base.OnRender(drawingContext);
 
-
             if (Items != null)
                 foreach (var item in Items)
                     item.AttachedView ??= this;
             // 容器框架绘制
             var size = RenderSize;
-            drawingContext.DrawRectangle(Background, new Pen(Brushes.Blue, 2), new Rect(new Point(0, 0), size));
+            drawingContext.DrawRectangle(Background, new Pen(Brushes.Transparent, 2), new Rect(new Point(0, 0), size));
 
-            if (Title != null)
-            {
-                double pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
-                drawingContext.DrawText(new FormattedText(
-                        Title,                // 要绘制的文本
-                        CultureInfo.CurrentCulture,     // 区域信息
-                        FlowDirection.LeftToRight,      // 文本方向
-                        new Typeface("Arial"),          // 字体类型
-                        24 / pixelsPerDip,                             // 字体大小
-                        Brushes.Black,                  // 文本颜色
-                        pixelsPerDip
-                    ), new Point(0, 0));
-            }
 
-            // 装饰性元件
-            drawingContext.PushTransform(new ScaleTransform(Scalage, Scalage));
 
+            #region 绘制相对位置元件
+            //启动偏移
+            drawingContext.PushTransform(new TranslateTransform(ViewerLocation.X, ViewerLocation.Y));
+            drawingContext.PushTransform(new ScaleTransform(ViewerScale, ViewerScale));
             // 绘制节点
             int index = 0;
             if (Items == null) return;
@@ -268,6 +349,11 @@ namespace Zoranof.GraphicsFramework
                 item.OnRender(drawingContext);
                 //drawingContext.Pop();
             }
+            // 关闭偏移
+            drawingContext.Pop();
+            drawingContext.Pop();
+
+
             // 绘制连线  
 
             // 绘制选择框
@@ -275,6 +361,12 @@ namespace Zoranof.GraphicsFramework
                 new SolidColorBrush() { Opacity = 0.5, Color = Color.FromArgb(100, 0, 0, 0) },
                 new Pen(),
                 new Rect(m_boxSelectStartPoint, m_boxSelectEndPoint));
+
+
+
+            #endregion
+
+
         }
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
@@ -288,7 +380,7 @@ namespace Zoranof.GraphicsFramework
             ICollection<GraphicsItem> toSelectItems = new Collection<GraphicsItem>();
             foreach (var item in Items)
             {
-                if (item.BoundingRect.Contains(e.GetPosition(this))) toSelectItems.Add(item);
+                if (RectMapToViewer(item.BoundingRect).Contains(e.GetPosition(this))) toSelectItems.Add(item);
             }
 
 
@@ -346,14 +438,19 @@ namespace Zoranof.GraphicsFramework
                 m_isReadyToBoxSelect = false;
                 m_boxSelectStartPoint = new Point(0, 0);
                 m_boxSelectEndPoint = new Point(0, 0);
+                InvalidateVisual();
             }
 
             m_isReadyToMoveSelectedItems = false;
 
-            foreach (var item in Items)
+            if(m_isReadyToMoveViewer)
             {
-                item.OnMouseUp(e);
+                m_isReadyToMoveViewer = false;
+                m_viewerMoveStartPoint = new Point(0, 0);
+                m_viewerMoveEndPoint = new Point(0, 0);
+                InvalidateVisual();
             }
+
             base.OnMouseUp(e);
         }
 
@@ -400,6 +497,15 @@ namespace Zoranof.GraphicsFramework
                 m_moveItemsStartPoint = m_moveItemsEndPoint;
             }
 
+            // 移动画布
+            if (m_isReadyToMoveViewer)
+            {
+                m_viewerMoveEndPoint = e.GetPosition(this);
+                MoveViewerWithOffset(new Vector(
+                    m_viewerMoveEndPoint.X - m_viewerMoveStartPoint.X,
+                    m_viewerMoveEndPoint.Y - m_viewerMoveStartPoint.Y));
+                m_viewerMoveStartPoint = m_viewerMoveEndPoint;
+            }
         }
 
         protected override void OnMouseWheel(MouseWheelEventArgs e)
@@ -407,8 +513,9 @@ namespace Zoranof.GraphicsFramework
             base.OnMouseWheel(e);
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
-                double zoom = e.Delta > 0 ? 1.1 : 0.9;
-                Scalage = zoom * Scalage;
+                double zoom = e.Delta < 0 ? 1.1 : 0.9;
+                ViewerScale = zoom * ViewerScale;
+                Console.Write(ViewerScale);
                 InvalidateVisual();
             }
 

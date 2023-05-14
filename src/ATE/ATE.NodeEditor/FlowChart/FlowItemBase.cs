@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Zoranof.GraphicsFramework.FlowChart
 {
-    public class GraphicsFlowItemBase : LinkedGraphicsItem
+    public class FlowItemBase : GraphicsItem
     {
     }
 }

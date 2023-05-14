@@ -9,15 +9,9 @@
           mc:Ignorable="d" 
           d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="100"/>
-            <RowDefinition/>
-        </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal">
-            <TextBlock Text="{Binding Text, FallbackValue=nihao}"  />
-            <Button Content="添加随机Item" cm:Message.Attach="AddSomeThingToGraphicsView"/>
+        <workflow:WorkFlowEditor x:Name="GraphicsView"  Grid.Row="1" Items="{Binding Items}"  Background="#fefefe"/>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="5">
+            <Button Content="添加随机Item" cm:Message.Attach="AddSomeThingToGraphicsView" Style="{StaticResource PrimaryButtonStyle}"/>
         </StackPanel>
-        <workflow:WorkFlowEditor x:Name="GraphicsView"  Grid.Row="1" Items="{Binding Items}" Title="{Binding MyTitle}" Background="#fefefe"/>
-        
     </Grid>
 </UserControl>

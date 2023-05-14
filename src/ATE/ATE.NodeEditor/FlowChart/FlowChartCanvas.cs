@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Zoranof.GraphicsFramework
+namespace Zoranof.GraphicsFramework.FlowChart
 {
-    public class GraphicsScene
+    public class FlowChartCanvas : GraphicsView
     {
     }
 }

@@ -45,16 +45,39 @@ namespace Zoranof.GraphicsFramework
         public GraphicsView AttachedView { get; set; }
 
         #region General Slots
+        /// <summary>
+        /// 移动到点位
+        /// </summary>
+        /// <param name="target"></param>
         public virtual void MoveTo(Point target) { Pos = target; }
 
+        /// <summary>
+        /// 移动偏移
+        /// </summary>
+        /// <param name="offset"></param>
         public virtual void MoveWithOssfet(Vector offset)
         {
             Pos = new Point(Pos.X + offset.X, Pos.Y + offset.Y);
         }
+
+        /// <summary>
+        /// 转换坐标
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        protected internal virtual Point MapToView(Point point) { return new Point(); }
+
+        /// <summary>
+        /// 转换矩形坐标
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <returns></returns>
+        protected internal virtual Rect MapToView(Rect rect) { return new Rect(); }
+
         #endregion
 
 
-        #region Options
+        #region Fields
         /// <summary>
         /// 是否接收Drop事件
         /// </summary>
@@ -80,14 +103,11 @@ namespace Zoranof.GraphicsFramework
         /// </summary>
         public bool GrabMouse { get => grabMouse; set => grabMouse = value; }
 
-
         /// <summary>
         /// 抓取所有键盘事件
         /// </summary>
         public bool GrabKeyboard { get => grabKeyboard; set => grabKeyboard = value; }
-        #endregion
 
-        #region Appearances
         /// <summary>
         /// 鼠标形状
         /// </summary>
@@ -145,10 +165,6 @@ namespace Zoranof.GraphicsFramework
         /// </summary>
         public bool IsSelected { get => isSelected; set => isSelected = value; }
 
-        /// <summary>
-        /// 是否抓取到鼠标
-        /// </summary>
-        public bool IsMouseCaptured { get => isMouseCaptured; set => isMouseCaptured = value; }
 
         /// <summary>
         /// 是否按下鼠标
@@ -159,28 +175,20 @@ namespace Zoranof.GraphicsFramework
 
         public Point DraggingStartPos { get => draggingStartPos; set => draggingStartPos = value; }
 
+        /// <summary>
+        /// 缩放
+        /// </summary>
         public int Scalage { get; set; }
 
 
         #endregion
 
-        #region Functions
-        public Rect BoundingRegion() => boundingRect;
-
-        public Rect SceneBoundingRect() => boundingRect;
-
-        protected internal virtual bool IsCollidesWithItem(GraphicsItem item, ItemSelectionMode mode = ItemSelectionMode.IntersectsItemShape) { return true; }
-
-        protected internal virtual IList<GraphicsItem> CollidesItems(ItemSelectionMode mode) { return null; }
-
-        protected internal virtual bool IsContainsPoint(Point point) { return false; }
-
-        protected internal virtual void EnsureVisible() { }
-
-        protected internal virtual Point MapToScene(Point point) { return new Point(); }
-        protected internal virtual Rect MapToScene(Rect rect) { return new Rect(); }
-        protected internal virtual Path MapToScene(Path path) { return new Path(); }
-        protected internal virtual Polygon MapToScene(Polygon Polygon) { return new Polygon(); }
+        #region public slots
+        /// <summary>
+        /// 获取Item边界
+        /// </summary>
+        /// <returns></returns>
+        public virtual Rect GetBoundingRect() => new Rect(pos.X, pos.Y, width, height);
 
         protected void Update()
         {
@@ -190,56 +198,17 @@ namespace Zoranof.GraphicsFramework
 
         #region Events
         protected internal virtual void OnRender(DrawingContext drawingContext) { }
+        #endregion
 
-        protected internal virtual void OnMouseEnter(MouseEventArgs args)
-        {
-            IsMouseCaptured = true;
-        }
+        #region Custom Events
+        public event EventHandler ItemResized;
 
-        protected internal virtual void OnMouseExit(MouseEventArgs args)
-        {
-            isMouseCaptured = false;
-            IsDragging = false;
-        }
+        public event EventHandler ItemMoved;
 
-        protected internal virtual void OnMouseMove(MouseEventArgs args)
-        {
-            Console.WriteLine("当前", isDragging.ToString());
-            if (IsDragging)
-            {
-                var p = args.GetPosition(AttachedView);
-                Pos = new Point(Pos.X + p.X - draggingStartPos.X, pos.Y + p.Y - draggingStartPos.Y);
-                DraggingStartPos = p;
 
-                Console.Write((Pos.X + p.X - draggingStartPos.X).ToString(), (pos.Y + p.Y - draggingStartPos.Y).ToString());
+        protected internal virtual void OnItemResized(EventArgs e) => ItemResized?.Invoke(this, e);
 
-                Update();
-            }
-        }
-        protected internal virtual void OnMouseDown(MouseEventArgs args)
-        {
-            if (args.LeftButton == MouseButtonState.Pressed)
-            {
-                isDragging = true;
-                IsSelected = true;
-                DraggingStartPos = args.GetPosition(AttachedView);
-                Console.WriteLine("开始拖动" + Pos.ToString());
-            }
-
-        }
-        protected internal virtual void OnMouseUp(EventArgs args)
-        {
-            isDragging = false;
-            Update();
-        }
-
-        protected internal virtual void OnDrop(EventArgs args) { }
-
-        protected internal virtual void OnKeyUp(EventArgs args) { }
-        protected internal virtual void OnKeyDown(EventArgs args) { }
-
-        protected internal virtual void OnMove(EventArgs args) { }
-        protected internal virtual void OnResize(EventArgs args) { }
+        protected internal virtual void OnItemMoved(EventArgs e) => ItemMoved?.Invoke(this, e);
         #endregion
     }
 }

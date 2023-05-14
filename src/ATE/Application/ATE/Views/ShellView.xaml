@@ -6,7 +6,7 @@
         mc:Ignorable="d"
         xmlns:ccontrols="clr-namespace:ATE.Controls"
         xmlns:helpers="clr-namespace:Zoranof.UI.Wpf.Helpers;assembly=Zoranof.UI.Wpf"
-        Title="MainWindow" Height="600" Width="1200"
+        Title="MainWindow" Height="800" Width="1200"
         WindowState="Normal">
 
     <WindowChrome.WindowChrome>
@@ -28,8 +28,14 @@
             <ccontrols:Header />
         </Grid>
 
-        <Grid Grid.Row="1">
-            <ContentControl x:Name="ActiveItem"/>
+        <Grid Grid.Row="1" Background="#FBF9F7">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <ccontrols:NavBar Grid.Column="0" Width="75"/>
+            <ContentControl Grid.Column="1" x:Name="ActiveItem"/>
         </Grid>
 
     </Grid>
