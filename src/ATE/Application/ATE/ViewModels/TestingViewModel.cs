@@ -5,8 +5,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Threading;
 using Zoranof.GraphicsFramework;
-using Zoranof.GraphicsFramework.GraphicsBaseItems.Nodes;
-using Zoranof.GraphicsFramework.Nodes;
+using Zoranof.GraphicsFramework.Base;
 using Zoranof.WorkFlow;
 
 namespace ATE.ViewModels

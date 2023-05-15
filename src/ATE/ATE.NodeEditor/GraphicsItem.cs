@@ -170,6 +170,11 @@ namespace Zoranof.GraphicsFramework
         public bool IsActive { get => isActive; set { isActive = value; ZIndex = value ? 1 : 0; } }
 
         /// <summary>
+        /// 是否鼠标悬停
+        /// </summary>
+        public bool IsHovered { get; set; }
+
+        /// <summary>
         /// 是否按下鼠标
         /// </summary>
         public bool IsMousePressed { get; set; }

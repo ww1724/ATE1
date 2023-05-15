@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
 
-namespace Zoranof.GraphicsFramework.FlowChart
+namespace Zoranof.GraphicsFramework
 {
     public class FlowChartCanvas : GraphicsView
     {

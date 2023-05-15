@@ -55,10 +55,13 @@ namespace Zoranof.GraphicsFramework
         #endregion
 
         #region General Slots
+        protected virtual void SetHoveredItem(GraphicsItem item)
+        {
+
+        }
+
         protected virtual void DeleteSelectedItems(ICollection<GraphicsItem> items)
         {
-            //Items = new ObservableCollection<GraphicsItem>(Items.Where(x => x.IsSelected == false).ToList());
-            //SetValue(ItemsProperty, new ObservableCollection<GraphicsItem>(Items.Where(x => x.IsSelected == false)));
             for (int i = items.Count - 1; i >= 0; i--)
             {
                 if (Items[i].IsSelected)
@@ -66,13 +69,6 @@ namespace Zoranof.GraphicsFramework
                     Items.RemoveAt(i);
                 }
             }
-            //foreach (var item in items)
-            //{
-            //    if (item.IsSelected)
-            //    {
-            //        Items.Remove(item);
-            //    }
-            //}
             InvalidateVisual();
         }
 
@@ -586,7 +582,7 @@ namespace Zoranof.GraphicsFramework
             }
 
             // 移动已选择元素
-            if (m_isReadyToMoveSelectedItems)
+            else if (m_isReadyToMoveSelectedItems)
             {
                 m_moveItemsEndPoint = e.GetPosition(this);
                 MoveSelectedItemsWithOffset(new Vector(
@@ -596,13 +592,35 @@ namespace Zoranof.GraphicsFramework
             }
 
             // 移动画布
-            if (m_isReadyToMoveViewer)
+            else if (m_isReadyToMoveViewer)
             {
                 m_viewerMoveEndPoint = e.GetPosition(this);
                 MoveViewerWithOffset(new Vector(
                     m_viewerMoveEndPoint.X - m_viewerMoveStartPoint.X,
                     m_viewerMoveEndPoint.Y - m_viewerMoveStartPoint.Y));
                 m_viewerMoveStartPoint = m_viewerMoveEndPoint;
+            }
+        
+            else if(e.LeftButton == MouseButtonState.Released)
+            {
+                var p = e.GetPosition(this);
+                ICollection<GraphicsItem> toSelectItems = new Collection<GraphicsItem>();
+                foreach (var item in Items)
+                {
+                    if (item.IsHovered == true) {
+                        item.IsHovered = false;
+                        InvalidateVisual();
+                    }
+                    if (RectMapToViewer(item.BoundingRect).Contains(e.GetPosition(this)))
+                    {
+                        toSelectItems.Add(item);
+                    }
+                }
+                if (toSelectItems.Count > 0)
+                {
+                    toSelectItems.OrderByDescending(a => a.ZIndex).FirstOrDefault().IsHovered = true;
+                    InvalidateVisual();
+                }
             }
         }
 

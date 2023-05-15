@@ -4,16 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Zoranof.GraphicsFramework.FlowChart
+namespace Zoranof.GraphicsFramework
 {
-    public class GraphicsOption
+    public class FlowNodeOption
     {
-        public GraphicsOption()
+        public FlowNodeOption()
         {
 
         }
 
-        public GraphicsOption(string text)
+        public FlowNodeOption(string text)
         {
 
         }
@@ -23,6 +23,9 @@ namespace Zoranof.GraphicsFramework.FlowChart
 
         public string Description { get; set; }
 
+        public GraphicsItem Owner { get; set; }
+
+        public bool IsSingle { get; set; }
 
         #endregion
 
@@ -52,7 +55,6 @@ namespace Zoranof.GraphicsFramework.FlowChart
 
         protected internal virtual void OnDataTransferStarted(EventArgs e) { DataTransferStarted.Invoke(this, e); }
         #endregion
-
 
         #region private slots
         //private bool AddConnection(GraphicsOption graphicsOption) { }

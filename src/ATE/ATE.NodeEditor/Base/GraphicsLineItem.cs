@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace Zoranof.GraphicsFramework.GraphicsBaseItems.Nodes
+namespace Zoranof.GraphicsFramework.Base
 {
     public class GraphicsLineItem : GraphicsItem
     {

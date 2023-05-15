@@ -1,8 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Media;
-using Zoranof.GraphicsFramework.FlowChart;
 
-namespace Zoranof.GraphicsFramework.Nodes
+namespace Zoranof.GraphicsFramework
 {
     public class StartNode : FlowNode
     {
@@ -10,8 +9,8 @@ namespace Zoranof.GraphicsFramework.Nodes
 
         public StartNode()
         {
-            Height = 25;
-            Width = 40;
+            Height = 40;
+            Width = 60;
             Pos = new Point(0, 0);
             BoundingRect = new Rect(Pos.X, Pos.Y, Width, Height);
 
@@ -23,17 +22,15 @@ namespace Zoranof.GraphicsFramework.Nodes
 
             var borderRect = GetBoundingRect();
             Pen borderPen = new Pen(new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1B5664")), 3);
-            Brush bgBrush = IsSelected ? Brushes.Red : Brushes.Transparent;
+            Brush bgBrush = IsSelected ? Brushes.White : Brushes.Transparent;
             drawingContext.DrawRoundedRectangle(
                 bgBrush,
                 borderPen,
                 borderRect,
                 10, 10);
-            //drawingContext.Pop();
-            //base.OnDrawFramework(drawingContext);
         }
 
-        protected internal override void OnDrawContent(System.Windows.Media.DrawingContext drawingContext)
+        protected internal override void OnDrawContent(DrawingContext drawingContext)
         {
             //base.OnDrawContent(drawingContext);
             //var rect = new Rect(0, 0, Width, Height);

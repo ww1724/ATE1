@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Media3D;
 using Zoranof.GraphicsFramework;
-using Zoranof.GraphicsFramework.FlowChart;
 
 namespace Zoranof.WorkFlow
 {
