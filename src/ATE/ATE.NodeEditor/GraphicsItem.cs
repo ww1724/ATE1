@@ -29,10 +29,9 @@ namespace Zoranof.GraphicsFramework
         private double scale;
         private double width;
         private double height;
-        private bool isMouseCaptured;
-        private bool isMousePressed;
         private bool isDragging;
         private Point draggingStartPos;
+        private bool isActive;
         #endregion
 
         public GraphicsItem()
@@ -161,15 +160,19 @@ namespace Zoranof.GraphicsFramework
         public Dictionary<string, object> MetaData { get => metaData; set => metaData = value; }
 
         /// <summary>
-        /// 是否获取焦点
+        /// 是否被选择
         /// </summary>
         public bool IsSelected { get => isSelected; set => isSelected = value; }
 
+        /// <summary>
+        /// 是否激活
+        /// </summary>
+        public bool IsActive { get => isActive; set { isActive = value; ZIndex = value ? 1 : 0; } }
 
         /// <summary>
         /// 是否按下鼠标
         /// </summary>
-        public bool IsMousePressed { get => isMousePressed; set => isMousePressed = value; }
+        public bool IsMousePressed { get; set; }
 
         public bool IsDragging { get => isDragging; set => isDragging = value; }
 
@@ -181,6 +184,7 @@ namespace Zoranof.GraphicsFramework
         public int Scalage { get; set; }
 
 
+        public int ZIndex { get; set; }
         #endregion
 
         #region public slots
@@ -188,7 +192,7 @@ namespace Zoranof.GraphicsFramework
         /// 获取Item边界
         /// </summary>
         /// <returns></returns>
-        public virtual Rect GetBoundingRect() => new Rect(pos.X, pos.Y, width, height);
+        public virtual Rect GetBoundingRect() => new(pos.X, pos.Y, width, height);
 
         protected void Update()
         {

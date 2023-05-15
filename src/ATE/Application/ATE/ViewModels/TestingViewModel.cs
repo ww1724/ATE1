@@ -2,9 +2,11 @@
 using Caliburn.Micro;
 using System;
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Threading;
 using Zoranof.GraphicsFramework;
-using Zoranof.GraphicsFramework.GraphicsBaseItems;
+using Zoranof.GraphicsFramework.GraphicsBaseItems.Nodes;
+using Zoranof.GraphicsFramework.Nodes;
 using Zoranof.WorkFlow;
 
 namespace ATE.ViewModels
@@ -14,7 +16,6 @@ namespace ATE.ViewModels
         DispatcherTimer DispatcherTimer;
         public TestingViewModel()
         {
-            MyTitle = "Start";
             DispatcherTimer = new DispatcherTimer()
             {
                 Interval = TimeSpan.FromMilliseconds(500)
@@ -36,7 +37,7 @@ namespace ATE.ViewModels
         }
 
 
-        private ObservableCollection<GraphicsItem> items = new() { new GraphicsLineItem() };
+        private ObservableCollection<GraphicsItem> items = new() { new GraphicsLineItem() { Pos = new Point(100, 100) }, new StartNode() { Pos = new Point(100, 100) } };
 
         public ObservableCollection<GraphicsItem> Items
         {
@@ -44,18 +45,9 @@ namespace ATE.ViewModels
             set { items = value; NotifyOfPropertyChange(); }
         }
 
-        private string myTitle;
-
-        public string MyTitle
-        {
-            get { return myTitle; }
-            set { myTitle = value; NotifyOfPropertyChange(); }
-        }
-
-
         public void AddSomeThingToGraphicsView()
         {
-            Items.Add(new WorkflowItemBase{ Pos = new System.Windows.Point((new Random().Next(0, 500)), (new Random().Next(0, 500))) });
+            Items.Add(new WorkflowNodeBase{ Pos = new System.Windows.Point((new Random().Next(0, 500)), (new Random().Next(0, 500))) });
         }
     }
 }

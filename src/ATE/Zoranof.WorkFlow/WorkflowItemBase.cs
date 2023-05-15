@@ -12,11 +12,11 @@ using Zoranof.GraphicsFramework.FlowChart;
 
 namespace Zoranof.WorkFlow
 {
-    public class WorkflowItemBase : FlowItem
+    public class WorkflowNodeBase : FlowNode
     {
 
 
-        public WorkflowItemBase()
+        public WorkflowNodeBase()
         {
             Width = 200;
             Height = 300;

@@ -3,6 +3,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.DirectoryServices.ActiveDirectory;
 using System.Globalization;
+using System.Security.Cryptography;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -21,6 +22,8 @@ namespace Zoranof.GraphicsFramework
             ClipToBounds = true;
             ViewerLocation = new Point(0, 0);
             Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FEFCFB"));
+
+            ActiveItem = null;
         }
 
 
@@ -36,7 +39,7 @@ namespace Zoranof.GraphicsFramework
         #endregion
 
         #region Variables
-        private bool m_isAnySelected;
+        private GraphicsItem ActiveItem { get;set; }
 
         private bool m_isReadyToBoxSelect;
         private Point m_boxSelectStartPoint;
@@ -52,6 +55,66 @@ namespace Zoranof.GraphicsFramework
         #endregion
 
         #region General Slots
+        protected virtual void DeleteSelectedItems(ICollection<GraphicsItem> items)
+        {
+            //Items = new ObservableCollection<GraphicsItem>(Items.Where(x => x.IsSelected == false).ToList());
+            //SetValue(ItemsProperty, new ObservableCollection<GraphicsItem>(Items.Where(x => x.IsSelected == false)));
+            for (int i = items.Count - 1; i >= 0; i--)
+            {
+                if (Items[i].IsSelected)
+                {
+                    Items.RemoveAt(i);
+                }
+            }
+            //foreach (var item in items)
+            //{
+            //    if (item.IsSelected)
+            //    {
+            //        Items.Remove(item);
+            //    }
+            //}
+            InvalidateVisual();
+        }
+
+        protected virtual void DeleteItems(ICollection<GraphicsItem> items)
+        {
+            foreach (var item in items)
+            {
+                Items.Remove(item);
+            }
+            InvalidateVisual();
+        }
+
+        protected virtual void SetActiveItem(GraphicsItem item)
+        {
+            foreach (var i in Items)
+            {
+                i.IsActive = false;
+            }
+            ActiveItem = item;
+            item.IsActive = true;
+        }
+
+        protected virtual void SelectItemAS(GraphicsItem item)
+        {
+            foreach (GraphicsItem item1 in Items)
+            {
+                item1.IsSelected = false;
+            }
+
+            item.IsSelected = true;
+            InvalidateVisual();
+            OnSelectedChanged(new GraphicsViewEventArgs(item));
+
+        }
+
+        protected virtual void SelectItemIS(GraphicsItem item)
+        {
+            item.IsSelected = true;
+            InvalidateVisual();
+            OnSelectedChanged(new GraphicsViewEventArgs(item));
+        }
+
         /// <summary>
         /// 选择给定元素  绝对式
         /// </summary>
@@ -123,8 +186,6 @@ namespace Zoranof.GraphicsFramework
         /// <param name="selectedBoxRect">当前选框的rect</param>
         protected virtual void ToBoxSelect(Rect selectedBoxRect)
         {
-
-            m_isAnySelected = false;
             ICollection<GraphicsItem> toSelectItems = new Collection<GraphicsItem>();
             foreach (var item in Items)
             {
@@ -145,7 +206,6 @@ namespace Zoranof.GraphicsFramework
                     SelectItemsAS(toSelectItems);
 
                 }
-                m_isAnySelected = true;
             }
             InvalidateVisual();
         }
@@ -191,6 +251,7 @@ namespace Zoranof.GraphicsFramework
             }
             InvalidateVisual();
         }
+       
         /// <summary>
         /// 物理坐标转换到视图坐标
         /// </summary>
@@ -315,6 +376,11 @@ namespace Zoranof.GraphicsFramework
 
         private void OnItemsCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            foreach(var item in Items)
+            {
+                item.AttachedView= this;
+            }
+            Focus();
             InvalidateVisual();
         }
 
@@ -322,52 +388,82 @@ namespace Zoranof.GraphicsFramework
         #endregion
 
         #region Events
+        protected override void OnGotFocus(RoutedEventArgs e)
+        {
+            base.OnGotFocus(e);
+
+            InvalidateVisual();
+        }
+
         protected override void OnRender(DrawingContext drawingContext)
         {
             base.OnRender(drawingContext);
 
-            if (Items != null)
-                foreach (var item in Items)
-                    item.AttachedView ??= this;
             // 容器框架绘制
-            var size = RenderSize;
-            drawingContext.DrawRectangle(Background, new Pen(Brushes.Transparent, 2), new Rect(new Point(0, 0), size));
+            OnDrawFramework(drawingContext);
+  
+            // 绘制元素
+            OnDrawItems(drawingContext);
+
+            // 各事件绘制
+            OnDrawActionIndicator(drawingContext);
+            
+            // 绘制信息
+            OnDrawAlert(drawingContext);    
+
+            // 绘制标志
+            OnDrawMask(drawingContext); 
+            #endregion
+        }
+
+        protected virtual void OnDrawFramework(DrawingContext drawingContext) {
+
+            // 是否获取焦点绘制不同边框
+            Pen borderPen = new Pen(
+                IsFocused ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#CBCFF2")) :Brushes.Transparent,
+                3);
+
+            Brush bgBrush = Background;
+
+            drawingContext.DrawRectangle(
+                bgBrush,
+                borderPen,
+                new Rect(new Point(4, 4), new Point(RenderSize.Width - 4, RenderSize.Height - 4)));
 
 
+        }
 
+        protected virtual void OnDrawItems(DrawingContext drawingContext) {
+
+            if(Items == null) return;
             #region 绘制相对位置元件
             //启动偏移
             drawingContext.PushTransform(new TranslateTransform(ViewerLocation.X, ViewerLocation.Y));
             drawingContext.PushTransform(new ScaleTransform(ViewerScale, ViewerScale));
             // 绘制节点
-            int index = 0;
-            if (Items == null) return;
-            foreach (var item in Items)
+            foreach (var item in Items.OrderBy(x => x.ZIndex).ToList())
             {
-                index++;
-                //drawingContext.PushTransform(new TranslateTransform(item.Pos.X, item.Pos.Y));
                 item.OnRender(drawingContext);
-                //drawingContext.Pop();
             }
             // 关闭偏移
             drawingContext.Pop();
             drawingContext.Pop();
-
-
-            // 绘制连线  
-
-            // 绘制选择框
-            drawingContext.DrawRectangle(
-                new SolidColorBrush() { Opacity = 0.5, Color = Color.FromArgb(100, 0, 0, 0) },
-                new Pen(),
-                new Rect(m_boxSelectStartPoint, m_boxSelectEndPoint));
-
-
-
-            #endregion
-
-
         }
+
+        protected virtual void OnDrawActionIndicator(DrawingContext drawingContext)
+        {
+            if (m_isReadyToBoxSelect)
+            {
+                drawingContext.DrawRectangle(
+                    new SolidColorBrush() { Opacity = 0.5, Color = Color.FromArgb(100, 0, 0, 0) },
+                    new Pen(),
+                    new Rect(m_boxSelectStartPoint, m_boxSelectEndPoint));
+            }
+        }
+
+        protected virtual void OnDrawAlert(DrawingContext drawingContext) { }
+
+        protected virtual void OnDrawMask(DrawingContext drawingContext) { }
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
         {
@@ -377,11 +473,17 @@ namespace Zoranof.GraphicsFramework
 
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
+            Focus();
             ICollection<GraphicsItem> toSelectItems = new Collection<GraphicsItem>();
             foreach (var item in Items)
             {
-                if (RectMapToViewer(item.BoundingRect).Contains(e.GetPosition(this))) toSelectItems.Add(item);
+                if (RectMapToViewer(item.BoundingRect).Contains(e.GetPosition(this)))
+                {
+                    toSelectItems.Add(item);
+                }
             }
+
+            var _activeItem = toSelectItems.OrderByDescending(a => a.ZIndex).FirstOrDefault();
 
 
             // 左键按下 => 选择元素 || 准备移动元素 || 准备框选元素
@@ -390,17 +492,13 @@ namespace Zoranof.GraphicsFramework
                 // 按下鼠标时鼠标下有元素 => 选择Items
                 if (toSelectItems.Count > 0)
                 {
-
-                    if (!toSelectItems.Any(x => x.IsSelected))
+                    SetActiveItem(_activeItem);
+                    if(!_activeItem.IsSelected)
                     {
-                        // 根据Ctrl按键状态选择元素
                         if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
-                            SelectItemsIS(toSelectItems);
-                        else SelectItemsAS(toSelectItems);
+                            SelectItemIS(_activeItem);
+                        else SelectItemAS(_activeItem);
                     }
-
-
-
                     // 准备移动元素
                     m_isReadyToMoveSelectedItems = true;
                     m_moveItemsStartPoint = e.GetPosition(this);
@@ -518,16 +616,58 @@ namespace Zoranof.GraphicsFramework
                 Console.Write(ViewerScale);
                 InvalidateVisual();
             }
-
-
-
         }
 
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        {
+            if (e.Key == Key.Delete)
+            {
+                DeleteSelectedItems(Items);
+                e.Handled = true;
+            }
+            base.OnKeyDown(e);
+        }
 
+        protected override void OnKeyDown(KeyEventArgs e)
+        {
+
+            if (e.Key == Key.Delete)
+            {
+                DeleteSelectedItems(Items);
+                e.Handled = true;
+            }
+            else if (e.Key == Key.A && e.KeyboardDevice.Modifiers == ModifierKeys.Control)
+            {
+                SelectAllItems();
+            }
+
+            base.OnKeyDown(e);
+        }
+
+        protected override void OnDrop(DragEventArgs e)
+        {
+            base.OnDrop(e);
+        }
+
+        protected override void OnDragEnter(DragEventArgs e)
+        {
+            base.OnDragEnter(e);
+        }
+
+        protected override void OnDragOver(DragEventArgs e)
+        {
+            base.OnDragOver(e);
+        }
+
+        protected override void OnDragLeave(DragEventArgs e)
+        {
+            base.OnDragLeave(e);
+        }
         #region Custom Events
         public event EventHandler ViewScaled;
         public event EventHandler SelectedChanged;
         public event EventHandler HoveredChanged;
+        public event EventHandler ActiveChanged;
         public event EventHandler ItemAdded;
         public event EventHandler ItemRemoved;
         public event EventHandler ViewerMoved;
@@ -538,6 +678,8 @@ namespace Zoranof.GraphicsFramework
         protected virtual void OnSelectedChanged(GraphicsViewEventArgs e) => SelectedChanged?.Invoke(this, e);
 
         protected virtual void OnHoveredChanged(GraphicsViewEventArgs e) => HoveredChanged?.Invoke(this, e);
+
+        protected virtual void OnActiveChanged(GraphicsViewEventArgs e) => ActiveChanged?.Invoke(this, e);
 
         protected virtual void OnItemAdded(GraphicsViewEventArgs e) => ItemAdded?.Invoke(this, e);
 
