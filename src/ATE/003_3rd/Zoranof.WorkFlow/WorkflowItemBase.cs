@@ -19,9 +19,9 @@ namespace Zoranof.WorkFlow
         }
 
         #region Events
-        protected override void OnRender(DrawingContext drawingContext)
+        protected override void OnDrawBeforeMark(DrawingContext drawingContext)
         {
-            base.OnRender(drawingContext);
+            //base.OnRender(drawingContext);
             // draw bg
 
             Brush borderBrush = IsSelected ?

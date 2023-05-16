@@ -7,13 +7,13 @@ namespace Zoranof.GraphicsFramework
     {
 
 
-        public StartNode()
+        public StartNode() : base()
         {
             Height = 40;
             Width = 60;
             Pos = new Point(0, 0);
             BoundingRect = new Rect(Pos.X, Pos.Y, Width, Height);
-
+            base.ApplyDefaultOptions();
         }
 
         #region Public Slots

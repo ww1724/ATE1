@@ -7,48 +7,173 @@ using Zoranof.GraphicsFramework.Common;
 
 namespace Zoranof.GraphicsFramework
 {
-    public abstract class GraphicsItem 
+    public abstract class GraphicsItem
     {
         #region Private Member
-        private bool acceptDrops;
-        private bool acceptHoverEvents;
-        private bool acceptTouchEvents;
-        private Rect boundingRect;
-        private List<GraphicsItem> childItems;
-        private Dictionary<string, object> metaData;
-        private object data;
-        private Common.CacheMode cacheMode;
-        private double opacity;
-        private Cursor cursor;
-        private bool grabMouse;
-        private bool isSelected;
-        private bool grabKeyboard;
-        private GraphicsItem parentItem;
         private Point pos;
-        private int rotation;
-        private double scale;
-        private double width;
-        private double height;
-        private bool isDragging;
-        private Point draggingStartPos;
-        private bool isActive;
         #endregion
 
-        public GraphicsItem()
+        public GraphicsItem(bool applyDefaultOptions = true)
         {
-
-            // default value init
-            acceptDrops = false;
-            acceptHoverEvents = true;
-            acceptTouchEvents = false;
-            Height = 320;
-            Width = 120;
+            AcceptDrops = false;
+            AcceptHoverEvents = true;
+            AcceptTouchEvents = false;
+            Height = 200;
+            Width = 150;
             Options = new List<NodeOption>();
+            Background = Brushes.Transparent;
+            NearOptionDistance = 10;
+
+            if (applyDefaultOptions) ApplyDefaultOptions();
         }
 
         public GraphicsView AttachedView { get; set; }
 
-        #region General Slots
+
+        #region Private Fields
+        private double width;
+
+        private double height;
+        #endregion
+
+        #region Fields
+        public double NearOptionDistance { get; set; }
+
+        public Guid Id { get; set; }
+
+        public Brush Background { get; set; }
+
+        /// <summary>
+        /// 是否接收Drop事件
+        /// </summary>
+        public bool AcceptDrops { get; set; }
+
+        /// <summary>
+        /// 是否接收悬浮事件
+        /// </summary>
+        public bool AcceptHoverEvents { get; set; }
+
+        /// <summary>
+        /// 是否接收触摸事件
+        /// </summary>
+        public bool AcceptTouchEvents { get; set; }
+
+        /// <summary>
+        /// 缓冲模式
+        /// </summary>
+        public Common.CacheMode CacheMode { get; set; }
+
+        /// <summary>
+        /// 抓取所有鼠标事件
+        /// </summary>
+        public bool GrabMouse { get; set; }
+
+        /// <summary>
+        /// 抓取所有键盘事件
+        /// </summary>
+        public bool GrabKeyboard { get; set; }
+
+        /// <summary>
+        /// 鼠标形状
+        /// </summary>
+        public Cursor Cursor { get; set; }
+
+        public double Opacity { get; set; }
+
+        public int Rotation { get; set; }
+
+        public double Scale { get; set; }
+
+        public double Width { get => width; set { width = value; OnItemResized(null); } }
+
+
+        public double Height { get => height; set { height = value; OnItemResized(null); } }
+        #endregion
+
+        #region Variables
+        public NodeOption ActiveOption { get; set; }
+        public NodeOption HoverOprion { get; set; }
+        public List<NodeOption> Options { get; set; }
+
+        /// <summary>
+        /// 当前位置
+        /// </summary>
+        public Point Pos
+        {
+            get => pos;
+            set { pos = value; BoundingRect = new Rect(pos.X, pos.Y, Width, Height); }
+        }
+        /// <summary>
+        /// 父项目
+        /// </summary>
+        public GraphicsItem ParentItem { get; set; }
+
+        /// <summary>
+        /// 子项目
+        /// </summary>
+        public List<GraphicsItem> ChildItems { get; set; }
+
+        /// <summary>
+        /// Item边框
+        /// </summary>
+        public Rect BoundingRect { get; set; }
+
+
+        /// <summary>
+        /// 包含的数据
+        /// </summary>
+        public object Data { get; set; }
+
+        /// <summary>
+        /// 元数据
+        /// </summary>
+        public Dictionary<string, object> MetaData { get; set; }
+
+        /// <summary>
+        /// 是否被选择
+        /// </summary>
+        public bool IsSelected { get; set; }
+
+        /// <summary>
+        /// 是否激活
+        /// </summary>
+        public bool IsActive { get; set; }
+
+        /// <summary>
+        /// 是否鼠标悬停
+        /// </summary>
+        public bool IsHovered { get; set; }
+
+        /// <summary>
+        /// 是否按下鼠标
+        /// </summary>
+        public bool IsMousePressed { get; set; }
+
+        public bool IsDragging { get; set; }
+
+        /// <summary>
+        /// 缩放
+        /// </summary>
+        public int Scalage { get; set; }
+
+
+        public int ZIndex { get; set; }
+        #endregion
+
+        #region public slots
+        /// <summary>
+        /// 应用默认选项点
+        /// </summary>
+        public void ApplyDefaultOptions()
+        {
+            ItemResized += (sender, e) =>
+            {
+                SetDefaultOptions();
+            };
+
+            OnItemResized(null);
+        }
+
         /// <summary>
         /// 移动到点位
         /// </summary>
@@ -70,7 +195,7 @@ namespace Zoranof.GraphicsFramework
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
-        protected internal virtual Point MapToView(Point point) { return new Point(); }
+        protected Point PointMapToView(Point point) { return new Point(Pos.X + point.X, Pos.Y + point.Y); }
 
         /// <summary>
         /// 转换矩形坐标
@@ -79,132 +204,6 @@ namespace Zoranof.GraphicsFramework
         /// <returns></returns>
         protected internal virtual Rect MapToView(Rect rect) { return new Rect(); }
 
-        #endregion
-
-
-        #region Fields
-        public Guid Id { get; set; }
-
-        /// <summary>
-        /// 是否接收Drop事件
-        /// </summary>
-        public bool AcceptDrops { get => acceptDrops; set => acceptDrops = value; }
-
-        /// <summary>
-        /// 是否接收悬浮事件
-        /// </summary>
-        public bool AcceptHoverEvents { get => acceptHoverEvents; set => acceptHoverEvents = value; }
-
-        /// <summary>
-        /// 是否接收触摸事件
-        /// </summary>
-        public bool AcceptTouchEvents { get => acceptTouchEvents; set => acceptTouchEvents = value; }
-
-        /// <summary>
-        /// 缓冲模式
-        /// </summary>
-        public Common.CacheMode CacheMode { get => cacheMode; set => cacheMode = value; }
-
-        /// <summary>
-        /// 抓取所有鼠标事件
-        /// </summary>
-        public bool GrabMouse { get => grabMouse; set => grabMouse = value; }
-
-        /// <summary>
-        /// 抓取所有键盘事件
-        /// </summary>
-        public bool GrabKeyboard { get => grabKeyboard; set => grabKeyboard = value; }
-
-        /// <summary>
-        /// 鼠标形状
-        /// </summary>
-        public Cursor Cursor { get => cursor; set => cursor = value; }
-
-        public double Opacity { get => opacity; set => opacity = value; }
-
-        public int Rotation { get => rotation; set => rotation = value; }
-
-        public double Scale { get => scale; set => scale = value; }
-
-        public double Width { get => width; set => width = value; }
-
-        public double Height { get => height; set => height = value; }
-
-        #endregion
-
-        #region Variables
-        public NodeOption ActiveOption { get; set; }
-        public NodeOption HoverOprion { get; set; }
-        public List<NodeOption> Options { get; set; }
-
-        /// <summary>
-        /// 当前位置
-        /// </summary>
-        public Point Pos
-        {
-            get => pos;
-            set { pos = value; BoundingRect = new Rect(pos.X, pos.Y, width, height); }
-        }
-        /// <summary>
-        /// 父项目
-        /// </summary>
-        public GraphicsItem ParentItem { get => parentItem; set => parentItem = value; }
-
-        /// <summary>
-        /// 子项目
-        /// </summary>
-        public List<GraphicsItem> ChildItems { get => childItems; set => childItems = value; }
-
-        /// <summary>
-        /// Item边框
-        /// </summary>
-        public Rect BoundingRect { get => boundingRect; set => boundingRect = value; }
-
-
-        /// <summary>
-        /// 包含的数据
-        /// </summary>
-        public object Data { get => data; set => data = value; }
-
-        /// <summary>
-        /// 元数据
-        /// </summary>
-        public Dictionary<string, object> MetaData { get => metaData; set => metaData = value; }
-
-        /// <summary>
-        /// 是否被选择
-        /// </summary>
-        public bool IsSelected { get => isSelected; set => isSelected = value; }
-
-        /// <summary>
-        /// 是否激活
-        /// </summary>
-        public bool IsActive { get => isActive; set { isActive = value; ZIndex = value ? 1 : 0; } }
-
-        /// <summary>
-        /// 是否鼠标悬停
-        /// </summary>
-        public bool IsHovered { get; set; }
-
-        /// <summary>
-        /// 是否按下鼠标
-        /// </summary>
-        public bool IsMousePressed { get; set; }
-
-        public bool IsDragging { get => isDragging; set => isDragging = value; }
-
-        public Point DraggingStartPos { get => draggingStartPos; set => draggingStartPos = value; }
-
-        /// <summary>
-        /// 缩放
-        /// </summary>
-        public int Scalage { get; set; }
-
-
-        public int ZIndex { get; set; }
-        #endregion
-
-        #region public slots
         /// <summary>
         /// 更新连接
         /// </summary>
@@ -215,13 +214,16 @@ namespace Zoranof.GraphicsFramework
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
-        public virtual NodeOption NearOption(Point point) => null;
+        public virtual NodeOption NearOption(Point point)  {
+            NodeOption option = Options.Where(x => PointMapToView(x.CenterPos).Distance(point) <= NearOptionDistance).FirstOrDefault();
+            return option;
+        }
 
         /// <summary>
         /// 获取Item边界
         /// </summary>
         /// <returns></returns>
-        public virtual Rect GetBoundingRect() => new(pos.X, pos.Y, width, height);
+        public virtual Rect GetBoundingRect() => new(pos.X, pos.Y, Width, Height);
 
         protected void Update()
         {
@@ -229,8 +231,21 @@ namespace Zoranof.GraphicsFramework
         }
         #endregion
 
+        #region Private Slots
+        void SetDefaultOptions()
+        {
+            Options = new List<NodeOption>()
+                {
+                    new NodeOption { CenterPos = new Point(Width / 2, 0) },
+                    new NodeOption { CenterPos = new Point(Width / 2, Height) },
+                    new NodeOption { CenterPos = new Point(0, Height / 2) },
+                    new NodeOption { CenterPos = new Point(Width, Height / 2) },
+                };
+        }
+        #endregion
+
         #region Events
-        protected internal virtual void OnRender(DrawingContext drawingContext) 
+        protected internal virtual void OnRender(DrawingContext drawingContext)
         {
 
             OnDrawFramework(drawingContext);
@@ -239,13 +254,15 @@ namespace Zoranof.GraphicsFramework
 
             OnDrawContent(drawingContext);
 
-            OnDrawConnectDot(drawingContext);
+            OnDrawConnectOption(drawingContext);
 
             OnDrawConnectLine(drawingContext);
 
+            OnDrawBeforeMark(drawingContext);
+
             OnDrawMark(drawingContext);
 
-            OnDrawResizeBorder(drawingContext);
+            //OnDrawResizeBorder(drawingContext);
 
         }
 
@@ -271,35 +288,19 @@ namespace Zoranof.GraphicsFramework
         /// 绘制连接点
         /// </summary>
         /// <param name="drawingContext"></param>
-        protected internal virtual void OnDrawConnectDot(DrawingContext drawingContext)
+        protected internal virtual void OnDrawConnectOption(DrawingContext drawingContext)
         {
             drawingContext.PushTransform(new TranslateTransform(Pos.X, Pos.Y));
-            Pen dotPen;
-            Brush bg;
-            ICollection<Point> points = new Collection<Point>()
-                {
-                    new Point(Width / 2, 0),
-                    new Point(0, Height / 2),
-                    new Point(Width, Height / 2),
-                    new Point(Width / 2, Height)
-                };
-            if (IsHovered)
+            Pen dotPen = IsHovered ? new Pen(Brushes.Black, 1) : new Pen(Brushes.Transparent, 1);
+            Brush bg = IsHovered ? Brushes.White : Brushes.Transparent;
+            foreach (var option in Options)
             {
-                dotPen = new Pen(Brushes.Black, 1);
-                bg = Brushes.White;
-            }
-            else
-            {
-                dotPen = new Pen(Brushes.Transparent, 1);
-                bg = Brushes.Transparent;
-            }
-
-            foreach (Point point in points)
-            {
-                drawingContext.DrawEllipse(bg, dotPen, point, 3, 3);
+                drawingContext.DrawEllipse(bg, dotPen, option.CenterPos, 3, 3);
             }
             drawingContext.Pop();
         }
+
+        protected internal virtual void OnDrawBeforeMark(DrawingContext drawingContext) { }
 
         /// <summary>
         /// 绘制Resize边框
@@ -307,20 +308,20 @@ namespace Zoranof.GraphicsFramework
         /// <param name="drawingContext"></param>
         protected virtual void OnDrawResizeBorder(DrawingContext drawingContext)
         {
-            ICollection<Rect> rects = new Collection<Rect>()
-            {
-                new Rect(0 - 3, 0 - 3, 6, 6),
-                new Rect(Width / 2 - 3, 0 - 3, 6, 6),
-                new Rect(Width -3, 0 - 3, 6, 6),
-                new Rect(0 - 3, Height / 2 - 3, 6, 6),
-                //new Rect(Width / 2 - 3, Height / 2 - 3, 6, 6),
-                new Rect(Width -3, Height / 2 - 3, 6, 6),
-                new Rect(0 - 3, Height - 3, 6, 6),
-                new Rect(Width / 2 - 3, Height - 3, 6, 6),
-                new Rect(Width -3, Height - 3, 6, 6)
-            };
+
             if (IsActive)
             {
+                ICollection<Rect> rects = new Collection<Rect>()
+                {
+                    new Rect(0 - 3, 0 - 3, 6, 6),
+                    new Rect(Width / 2 - 3, 0 - 3, 6, 6),
+                    new Rect(Width -3, 0 - 3, 6, 6),
+                    new Rect(0 - 3, Height / 2 - 3, 6, 6),
+                    new Rect(Width -3, Height / 2 - 3, 6, 6),
+                    new Rect(0 - 3, Height - 3, 6, 6),
+                    new Rect(Width / 2 - 3, Height - 3, 6, 6),
+                    new Rect(Width -3, Height - 3, 6, 6)
+                };
                 drawingContext.DrawRectangle(Brushes.Transparent, new Pen(Brushes.Black, 1), BoundingRect);
                 drawingContext.PushTransform(new TranslateTransform(Pos.X, Pos.Y));
 
@@ -352,6 +353,7 @@ namespace Zoranof.GraphicsFramework
         }
 
 
+
         #endregion
 
         #region Custom Events
@@ -365,6 +367,8 @@ namespace Zoranof.GraphicsFramework
 
         protected event EventHandler OptionChanged;
 
+        protected event EventHandler TextInputed;
+
         protected virtual void OnSizeChanged(EventArgs e) => SizeChanged?.Invoke(this, e);
 
         protected virtual void OnOptionChanged(EventArgs e) => OptionChanged?.Invoke(this, e);
@@ -374,6 +378,8 @@ namespace Zoranof.GraphicsFramework
         protected internal virtual void OnItemMoved(EventArgs e) => ItemMoved?.Invoke(this, e);
 
         protected internal virtual void OnPosChanged(EventArgs e) => PosChanged?.Invoke(this, e);
+
+        protected internal virtual void OnTextInputed(TextCompositionEventArgs e) => TextInputed?.Invoke(this, e);
         #endregion
     }
 }

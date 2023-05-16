@@ -2,9 +2,9 @@
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace Zoranof.GraphicsFramework.Base
+namespace Zoranof.GraphicsFramework.Shapes
 {
-    public class GraphicsLineItem : GraphicsItem
+    public class LineItem : GraphicsItem
     {
 
         private Point startPoint;
@@ -32,7 +32,7 @@ namespace Zoranof.GraphicsFramework.Base
         }
 
 
-        public GraphicsLineItem(GraphicsItem parent = null)
+        public LineItem(GraphicsItem parent = null) : base()
         {
             Width = 100;
             Height = 100;
@@ -42,12 +42,13 @@ namespace Zoranof.GraphicsFramework.Base
 
             LineColor = Brushes.Red;
             BoundingRect = new Rect(Pos.X, Pos.Y, Width, Height);
+            base.ApplyDefaultOptions();
         }
 
 
+        #region Override
         protected internal override void OnRender(DrawingContext drawingContext)
         {
-
             // 框架绘制
             if (IsSelected)
             {
@@ -60,6 +61,13 @@ namespace Zoranof.GraphicsFramework.Base
             drawingContext.Pop();
             base.OnRender(drawingContext);
         }
+
+        public override NodeOption NearOption(Point point)
+        {
+            return base.NearOption(point);
+        }
+        #endregion
+
 
         //protected internal override void OnMouseEnter(MouseEventArgs args)
         //{

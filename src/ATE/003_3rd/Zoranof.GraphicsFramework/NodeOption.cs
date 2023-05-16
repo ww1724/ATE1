@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Zoranof.GraphicsFramework
 {
@@ -19,6 +21,8 @@ namespace Zoranof.GraphicsFramework
         }
 
         #region Fields
+        public Point CenterPos { get; set; }
+
         public string Text { get; set; }
 
         public string Description { get; set; }
@@ -27,6 +31,7 @@ namespace Zoranof.GraphicsFramework
 
         public bool IsSingle { get; set; }
 
+        public bool IsRelative { get; set; }
         #endregion
 
         #region Custom Events

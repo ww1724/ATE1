@@ -21,15 +21,13 @@ namespace Zoranof.GraphicsFramework
         {
             ViewerScale = 1;
             ClipToBounds = true;
-            ViewerLocation = new Point(500, 500);
+            ViewerLocation = new Point(0, 0);
             Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FEFCFB"));
 
             ActiveItem = null;
             m_links = new List<OptionLink>();
             IsEditable = true;
         }
-
-
 
         #region Fields
         private List<OptionLink> m_links;
@@ -38,7 +36,7 @@ namespace Zoranof.GraphicsFramework
 
         public double ViewerScale { get; set; }
 
-        public Point ViewerLocation { get; set; } = new Point(500, 500);
+        public Point ViewerLocation { get; set; } = new Point(0, 0);
         #endregion
 
         #region Variables
@@ -60,6 +58,10 @@ namespace Zoranof.GraphicsFramework
         private Point m_moveItemsOriginPoint;
         private Point m_moveItemsStartPoint;
         private Point m_moveItemsEndPoint;
+
+        private bool m_isReadyToConnectOption;
+        private Point m_toConnectOptionStartPoint;
+        private Point m_toConnectOptionEndPoint;
         #endregion
 
         #region General Slots
@@ -94,9 +96,11 @@ namespace Zoranof.GraphicsFramework
             foreach (var i in Items)
             {
                 i.IsActive = false;
+                i.ZIndex = 0;
             }
             ActiveItem = item;
             item.IsActive = true;
+            item.ZIndex = 1;
         }
 
         protected virtual void SelectItemAS(GraphicsItem item)
@@ -362,13 +366,7 @@ namespace Zoranof.GraphicsFramework
         }
 
         public static readonly DependencyProperty FontProperty =
-            DependencyProperty.Register(
-                "Font", 
-                typeof(FontFamily), 
-                typeof(GraphicsView), 
-                new FrameworkPropertyMetadata(new FontFamily("Simsun"), FrameworkPropertyMetadataOptions.AffectsRender));
-
-
+            DependencyProperty.Register("Font", typeof(FontFamily), typeof(GraphicsView), new FrameworkPropertyMetadata(new FontFamily("Simsun"), FrameworkPropertyMetadataOptions.AffectsRender));
 
         public ObservableCollection<GraphicsItem> Items
         {
@@ -377,10 +375,7 @@ namespace Zoranof.GraphicsFramework
         }
 
         public static readonly DependencyProperty ItemsProperty =
-            DependencyProperty.Register("Items",
-                typeof(ObservableCollection<GraphicsItem>),
-                typeof(GraphicsView),
-                new FrameworkPropertyMetadata(null, OnItemsPropertyChanged));
+            DependencyProperty.Register("Items", typeof(ObservableCollection<GraphicsItem>), typeof(GraphicsView), new FrameworkPropertyMetadata(null, OnItemsPropertyChanged));
 
         private static void OnItemsPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -465,7 +460,6 @@ namespace Zoranof.GraphicsFramework
         protected virtual void OnDrawItems(DrawingContext drawingContext) {
 
             if(Items == null) return;
-            #region 绘制相对位置元件
             //启动偏移
             drawingContext.PushTransform(new TranslateTransform(ViewerLocation.X, ViewerLocation.Y));
             drawingContext.PushTransform(new ScaleTransform(ViewerScale, ViewerScale));
@@ -496,9 +490,14 @@ namespace Zoranof.GraphicsFramework
 
         protected internal void OnDrawLinks(DrawingContext drawingContext)
         {
+            if (m_isReadyToConnectOption)
+            {
+                drawingContext.DrawLine(new Pen(Brushes.Green, 2), m_toConnectOptionStartPoint, m_toConnectOptionEndPoint);
+            }
+
             foreach (var link in m_links)
             {
-
+                drawingContext.DrawLine(new Pen(Brushes.Green, 2), link.StartPoint, link.EndPoint);
             }
         }
 
@@ -511,24 +510,30 @@ namespace Zoranof.GraphicsFramework
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
             Focus();
-            ICollection<GraphicsItem> toSelectItems = new Collection<GraphicsItem>();
-            foreach (var item in Items)
-            {
-                if (RectMapToViewer(item.BoundingRect).Contains(e.GetPosition(this)))
-                {
-                    toSelectItems.Add(item);
-                }
-            }
-
-            var _activeItem = toSelectItems.OrderByDescending(a => a.ZIndex).FirstOrDefault();
-
 
             // 左键按下 => 选择元素 || 准备移动元素 || 准备框选元素
             if (e.LeftButton == MouseButtonState.Pressed)
             {
+
+                var _activeItem = Items
+                    .Where(x => RectMapToViewer(x.BoundingRect).Contains(e.GetPosition(this)))
+                    .OrderByDescending(x => x.ZIndex)
+                    .FirstOrDefault();
+                
+
                 // 按下鼠标时鼠标下有元素 => 选择Items
-                if (toSelectItems.Count > 0)
+                if (_activeItem != null)
                 {
+                    // 进入连线状态
+                    if (Items.Any(x => x.NearOption(e.GetPosition(this)) != null))
+                    {
+                        m_isReadyToConnectOption = true;
+                        m_toConnectOptionStartPoint = e.GetPosition(this);
+                        m_toConnectOptionEndPoint = e.GetPosition(this);
+                        return;
+                    }
+
+                    // 选择并准备移动元素
                     SetActiveItem(_activeItem);
                     if(!_activeItem.IsSelected)
                     {
@@ -540,6 +545,7 @@ namespace Zoranof.GraphicsFramework
                     m_isReadyToMoveSelectedItems = true;
                     m_moveItemsStartPoint = e.GetPosition(this);
                     m_moveItemsEndPoint = e.GetPosition(this);
+                    return;
                 }
                 else
                 {
@@ -551,6 +557,7 @@ namespace Zoranof.GraphicsFramework
                     
                     m_boxSelectStartPoint = e.GetPosition(this);
                     m_boxSelectEndPoint = e.GetPosition(this);
+                    return;
                 }
             }
 
@@ -588,6 +595,18 @@ namespace Zoranof.GraphicsFramework
                 m_viewerMoveEndPoint = new Point(0, 0);
                 InvalidateVisual();
             }
+            else if (m_isReadyToConnectOption)
+            {
+                m_toConnectOptionEndPoint = e.GetPosition(this);
+                if (Items.Any(x => x.NearOption(e.GetPosition(this)) != null))
+                {
+                    m_links.Add(new OptionLink { StartPoint = m_toConnectOptionStartPoint, EndPoint = m_toConnectOptionEndPoint });
+                }
+                m_isReadyToConnectOption = false;
+                m_toConnectOptionStartPoint = new Point(0, 0);
+                m_toConnectOptionEndPoint = new Point(0, 0);
+                InvalidateVisual();
+            }
             else
             {
                 UnSeselectAllItems();
@@ -620,6 +639,30 @@ namespace Zoranof.GraphicsFramework
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
+
+            // 鼠标hover
+            var p = e.GetPosition(this);
+            ICollection<GraphicsItem> toSelectItems = new Collection<GraphicsItem>();
+            foreach (var item in Items)
+            {
+                if (item.IsHovered == true)
+                {
+                    item.IsHovered = false;
+                    InvalidateVisual();
+                }
+                if (RectMapToViewer(item.BoundingRect).Contains(e.GetPosition(this)))
+                {
+                    toSelectItems.Add(item);
+                }
+            }
+            if (toSelectItems.Count > 0)
+            {
+                toSelectItems.OrderByDescending(a => a.ZIndex).FirstOrDefault().IsHovered = true;
+                InvalidateVisual();
+            }
+
+
+
             // 框选Items
             if (m_isReadyToBoxSelect)
             {
@@ -627,7 +670,11 @@ namespace Zoranof.GraphicsFramework
                 Rect selectedBoxRect = new Rect(m_boxSelectStartPoint, m_boxSelectEndPoint);
                 ToBoxSelect(selectedBoxRect);
             }
-
+            else if (m_isReadyToConnectOption)
+            {
+                m_toConnectOptionEndPoint = e.GetPosition(this);
+                InvalidateVisual();
+            }
             // 移动已选择元素
             else if (m_isReadyToMoveSelectedItems)
             {
@@ -653,31 +700,20 @@ namespace Zoranof.GraphicsFramework
             }
         
             // hovered
-            else if(e.LeftButton == MouseButtonState.Released)
-            {
-                var p = e.GetPosition(this);
-                ICollection<GraphicsItem> toSelectItems = new Collection<GraphicsItem>();
-                foreach (var item in Items)
-                {
-                    if (item.IsHovered == true) {
-                        item.IsHovered = false;
-                        InvalidateVisual();
-                    }
-                    if (RectMapToViewer(item.BoundingRect).Contains(e.GetPosition(this)))
-                    {
-                        toSelectItems.Add(item);
-                    }
-                }
-                if (toSelectItems.Count > 0)
-                {
-                    toSelectItems.OrderByDescending(a => a.ZIndex).FirstOrDefault().IsHovered = true;
-                    InvalidateVisual();
-                }
-            }
+            //else if(e.LeftButton == MouseButtonState.Released)
+            //{
+
+            //}
         }
+        
         protected override void OnTextInput(TextCompositionEventArgs e)
         {
             base.OnTextInput(e);
+
+            foreach (var item in Items)
+            {
+                item.OnTextInputed(e);
+            }
         }
 
         protected override void OnMouseWheel(MouseWheelEventArgs e)
@@ -764,8 +800,6 @@ namespace Zoranof.GraphicsFramework
         protected virtual void OnBoxSelectChanged(GraphicsViewEventArgs e) => BoxSelectChanged?.Invoke(this, e);
         #endregion
 
-        #endregion
         }
-
     #endregion
 }
