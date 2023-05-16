@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+	  <Nullable>disable</Nullable>
+	  <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Converters\" />
+    <Folder Include="Helpers\" />
+    <Folder Include="Themes\" />
+    <Folder Include="Resources\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Zoranof.UI.Wpf\src\Zoranof.UI.Wpf\Zoranof.UI.Wpf.csproj" />
+  </ItemGroup>
+
+</Project>

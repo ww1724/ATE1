@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="ATE.Controls.NavBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:cm="http://www.caliburnproject.org"
+             xmlns:helpers="clr-namespace:Zoranof.UI.Wpf.Helpers;assembly=Zoranof.UI.Wpf"
+             mc:Ignorable="d" 
+             d:DesignHeight="800" d:DesignWidth="75">
+    <Border BorderBrush="#F6F1EA" BorderThickness="0 0 2 0">
+        <Grid>
+            <Border  VerticalAlignment="Top">
+                <StackPanel Margin="0 15 0 0">
+                    <Button x:Name="TestingBoard" 
+                            Style="{StaticResource TextButtonStyle}"  Margin="5"  helpers:IconHelper.Icon="&#xe83d;"  helpers:IconHelper.IconSize="20"
+                            cm:Message.Attach="[Event Click] = [Action NavigationTo('Core.TestingBoard')]"/>
+                    <Button x:Name="EditorBoard" Style="{StaticResource TextButtonStyle}" 
+                            Margin="5" helpers:IconHelper.Icon="&#xe684;" helpers:IconHelper.IconSize="20"
+                            cm:Message.Attach="[Event Click] = [Action NavigationTo('Core.Console')]"/>
+                    <Button x:Name="Debug" 
+                            Style="{StaticResource TextButtonStyle}" Margin="5" helpers:IconHelper.Icon="&#xe688;" helpers:IconHelper.IconSize="20"
+                            cm:Message.Attach="[Event Click] = [Action NavigationTo('Core.Console')]"/>
+                    <Button x:Name="History" 
+                            Style="{StaticResource TextButtonStyle}" Margin="5" helpers:IconHelper.Icon="&#xe807;" helpers:IconHelper.IconSize="20"
+                            cm:Message.Attach="[Event Click] = [Action NavigationTo('Core.Console')]"/>
+                    <Button x:Name="central" 
+                            Style="{StaticResource TextButtonStyle}" Margin="5" helpers:IconHelper.Icon="&#xe7c9;" helpers:IconHelper.IconSize="20"
+                            cm:Message.Attach="[Event Click] = [Action NavigationTo('Core.Console')]" />
+                </StackPanel>
+            </Border>
+            <Border VerticalAlignment="Bottom" Margin="0 0 0 10">
+                <StackPanel>
+
+                    <Button x:Name="AppSettingBtn" Style="{StaticResource TextButtonStyle}" 
+                        helpers:IconHelper.Icon="&#xe654;   " helpers:IconHelper.IconSize="20"/>
+
+                    <Button x:Name="ThemeColorSelectBtn" Style="{StaticResource TextButtonStyle}" 
+                        helpers:IconHelper.Icon="&#xe616;" helpers:IconHelper.IconSize="18"/>
+
+                    <Button x:Name="ThemeDarkModeSwitchBtn" Style="{StaticResource TextButtonStyle}" 
+                        helpers:IconHelper.Icon="&#xe89b;" helpers:IconHelper.IconSize="18"/>
+
+                    <Border x:Name="UserWidget" Width="35" Height="35" CornerRadius="35" Margin="10">
+                        <Border.Background>
+                            <ImageBrush ImageSource="pack://application:,,,/ATE;component/Resources/avatar.jpg" />
+                        </Border.Background>
+                    </Border>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>
