@@ -1,13 +1,17 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Caliburn.Micro.Core" Version="4.0.212" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ATE.WorkFlow\ATE.WorkFlow.csproj" />
   </ItemGroup>
 
 </Project>

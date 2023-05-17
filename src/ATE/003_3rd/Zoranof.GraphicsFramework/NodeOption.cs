@@ -50,10 +50,6 @@ namespace Zoranof.GraphicsFramework
         public bool IsOnConnecting;
         #endregion
 
-        #region static public slots
-        
-        #endregion
-
         #region Custom Events
         public event EventHandler Connected;
 

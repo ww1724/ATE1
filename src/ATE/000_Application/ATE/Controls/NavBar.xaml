@@ -16,16 +16,16 @@
                             cm:Message.Attach="[Event Click] = [Action NavigationTo('Core.TestingBoard')]"/>
                     <Button x:Name="EditorBoard" Style="{StaticResource TextButtonStyle}" 
                             Margin="5" helpers:IconHelper.Icon="&#xe684;" helpers:IconHelper.IconSize="20"
-                            cm:Message.Attach="[Event Click] = [Action NavigationTo('Core.Console')]"/>
+                            cm:Message.Attach="[Event Click] = [Action NavigationTo('Core.Editor')]"/>
                     <Button x:Name="Debug" 
                             Style="{StaticResource TextButtonStyle}" Margin="5" helpers:IconHelper.Icon="&#xe688;" helpers:IconHelper.IconSize="20"
                             cm:Message.Attach="[Event Click] = [Action NavigationTo('Core.Console')]"/>
                     <Button x:Name="History" 
                             Style="{StaticResource TextButtonStyle}" Margin="5" helpers:IconHelper.Icon="&#xe807;" helpers:IconHelper.IconSize="20"
-                            cm:Message.Attach="[Event Click] = [Action NavigationTo('Core.Console')]"/>
+                            cm:Message.Attach="[Event Click] = [Action NavigationTo('Core.History')]"/>
                     <Button x:Name="central" 
                             Style="{StaticResource TextButtonStyle}" Margin="5" helpers:IconHelper.Icon="&#xe7c9;" helpers:IconHelper.IconSize="20"
-                            cm:Message.Attach="[Event Click] = [Action NavigationTo('Core.Console')]" />
+                            cm:Message.Attach="[Event Click] = [Action NavigationTo('Core.NewTab')]" />
                 </StackPanel>
             </Border>
             <Border VerticalAlignment="Bottom" Margin="0 0 0 10">

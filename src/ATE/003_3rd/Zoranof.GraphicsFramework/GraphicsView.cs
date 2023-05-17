@@ -1,12 +1,12 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using Zoranof.GraphicsFramework.Common;
-using Zoranof.GraphicsFramework.FlowChart;
 
 namespace Zoranof.GraphicsFramework
 {
@@ -72,6 +72,7 @@ namespace Zoranof.GraphicsFramework
             Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FEFCFB"));
             m_links = new List<OptionLink>();
             IsEditable = true;
+            AllowDrop = true;
 
         }
 
@@ -113,7 +114,6 @@ namespace Zoranof.GraphicsFramework
         #endregion
 
         #region General Slots
-
 
         protected virtual void SetHoveredItem(GraphicsItem item)
         {
@@ -370,6 +370,8 @@ namespace Zoranof.GraphicsFramework
 
         #region Public Slots
         public NodeOption GetNearOption(Point point) { 
+
+            point = new Point(point.X - ViewerLocation.X, point.Y - ViewerLocation.Y);
             NodeOption roption = null;
             foreach (var item in Items)
             {
@@ -490,15 +492,44 @@ namespace Zoranof.GraphicsFramework
 
         protected internal void OnDrawLinks(DrawingContext drawingContext)
         {
+            drawingContext.PushTransform(new TranslateTransform(ViewerLocation.X, ViewerLocation.Y));
             if (m_isReadyToConnectOption)
             {
-                drawingContext.DrawLine(new Pen(Brushes.Green, 2), m_toConnectOptionStartPoint, m_toConnectOptionEndPoint);
+                //drawingContext.DrawLine(new Pen(Brushes.Green, 2), m_toConnectOptionStartPoint, m_toConnectOptionEndPoint);
+                StreamGeometry geometry = new();
+                using (StreamGeometryContext ctx = geometry.Open())
+                {
+                    ctx.BeginFigure(m_toConnectOptionStartPoint, false, false);
+                    var c1 = new Point(m_toConnectOptionStartPoint.X + (m_toConnectOptionEndPoint.X - m_toConnectOptionStartPoint.X) / 2, m_toConnectOptionStartPoint.Y + (m_toConnectOptionEndPoint.Y - m_toConnectOptionStartPoint.Y) / 3);
+                    var c2 = new Point(m_toConnectOptionEndPoint.X + (m_toConnectOptionEndPoint.X - m_toConnectOptionStartPoint.X) / 2, m_toConnectOptionEndPoint.Y + (m_toConnectOptionEndPoint.Y - m_toConnectOptionStartPoint.Y) / 2);
+                    drawingContext.DrawEllipse(Brushes.Red, new Pen(Brushes.Red, 2), c1, 6, 6);
+                    drawingContext.DrawEllipse(Brushes.Red, new Pen(Brushes.Red, 2), c2, 6, 6);
+
+                    ctx.BezierTo(c1, c2, m_toConnectOptionEndPoint, true, true);
+                }
+                geometry.Freeze();
+                drawingContext.DrawGeometry(null, new Pen(Brushes.Green, 2), geometry);
             }
 
             foreach (var link in m_links)
             {
-                drawingContext.DrawLine(new Pen(Brushes.Green, 2), link.StartPoint, link.EndPoint);
+                //drawingContext.DrawLine(new Pen(Brushes.Green, 2), link.StartPoint, link.EndPoint);
+                StreamGeometry geometry = new();
+                using (StreamGeometryContext ctx = geometry.Open())
+                {
+                    ctx.BeginFigure(link.StartPoint, false, false);
+                    var c1 = new Point(link.StartPoint.X + (link.EndPoint.X - link.StartPoint.X) / 2, link.StartPoint.Y + ConnectLineDistance);
+                    var c2 = new Point(link.EndPoint.X - (link.EndPoint.X - link.StartPoint.X) / 2, link.EndPoint.Y - ConnectLineDistance);
+                    drawingContext.DrawEllipse(Brushes.Red, new Pen(Brushes.Red, 2), c1, 6, 6);
+                    drawingContext.DrawEllipse(Brushes.Red, new Pen(Brushes.Red, 2), c2, 6, 6);
+                    ctx.BezierTo( c1, c2, link.EndPoint, true, false);
+                }
+                geometry.Freeze();
+                drawingContext.DrawGeometry(null, new Pen(Brushes.Green, 2), geometry);
+  
             }
+            
+            drawingContext.Pop();
         }
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
@@ -618,8 +649,6 @@ namespace Zoranof.GraphicsFramework
                     m_toOption = nearOption;
                     if (m_toOption.IsConnectOptionValid(m_fromOption))
                         m_links.Add(new OptionLink { From=m_fromOption, To=m_toOption });
-
-
                 }
                 m_isReadyToConnectOption = false;
                 m_toConnectOptionStartPoint = new Point(0, 0);

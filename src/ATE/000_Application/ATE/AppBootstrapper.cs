@@ -76,9 +76,14 @@ namespace ATE
             simpleContainer = new SimpleContainer();
             simpleContainer.Singleton<IViewModel, ShellViewModel>(Constants.ShellView);
             simpleContainer.Singleton<IViewModel, MenuStore>(Constants.MenuStore);
+            simpleContainer.Singleton<IViewModel, TestingStore>(Constants.TestingStore);
 
             simpleContainer.PerRequest<IViewModel, TestingViewModel>(Constants.TestingBoardView);
             simpleContainer.PerRequest<IViewModel, ConsoleViewModel>(Constants.ConsoleView);
+            simpleContainer.PerRequest<IViewModel, EditorViewModel>(Constants.EditorView);
+            simpleContainer.PerRequest<IViewModel, HistoryViewModel>(Constants.HistoryView);
+            simpleContainer.PerRequest<IViewModel, NewTabViewModel>(Constants.NewTabView);
+
             batch.AddExportedValue(simpleContainer);
 
             container.Compose(batch);
