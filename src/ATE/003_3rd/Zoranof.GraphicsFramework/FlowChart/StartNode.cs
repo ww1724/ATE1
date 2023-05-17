@@ -17,34 +17,20 @@ namespace Zoranof.GraphicsFramework
         }
 
         #region Public Slots
-        public override NodeOption NearOption(Point point)
-        {
-            NodeOption nodeOption = null;
-            foreach(var option in Options)
-            {
-                //if (option.NearPoint(point))
-                //{
-                //    nodeOption = option;
-                //    break;
-                //}
-            }
-
-            return base.NearOption(point);
-        }
         #endregion
 
         protected internal override void OnDrawFramework(DrawingContext drawingContext)
         {
-            //drawingContext.PushTransform(new TranslateTransform(Pos.X, Pos.Y));
 
             var borderRect = GetBoundingRect();
-            Pen borderPen = new Pen(new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1B5664")), 3);
+            Pen borderPen = new(new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1B5664")), 3);
             Brush bgBrush = IsSelected ? Brushes.White : Brushes.Transparent;
             drawingContext.DrawRoundedRectangle(
                 bgBrush,
                 borderPen,
-                borderRect,
+                SelfRect,
                 10, 10);
+
         }
 
         protected internal override void OnDrawContent(DrawingContext drawingContext)

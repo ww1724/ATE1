@@ -12,9 +12,9 @@ namespace Zoranof.GraphicsFramework.FlowChart
     public class OptionLink
     {
         
-        public Point StartPoint { get; set; }
+        public Point StartPoint { get => From.PointToViewer; }
 
-        public Point EndPoint { get; set; }
+        public Point EndPoint { get => To.PointToViewer; }
         
         public NodeOption From { get; set; }
 
@@ -28,18 +28,26 @@ namespace Zoranof.GraphicsFramework.FlowChart
 
         public bool IsDragging { get; set; }
 
-        public NodeOption Target {get; set; }
+        public OptionLink()
+        {
+            LinkUpdated += (o, e) =>
+            {
+                
+            };
+        }
 
         public virtual void OnRender(DrawingContext drawingContext)
         {
 
         }
 
-        public virtual void UpdateLink() { }
+        #region Events
+        public event EventHandler LinkUpdated;
 
-        public event EventHandler TargetChanged;
+        public virtual void OnLinkUpdated(EventArgs e) => LinkUpdated?.Invoke(this, e);
+        #endregion
 
-        public virtual void OnTargetChanged(EventArgs e) => TargetChanged?.Invoke(this, e);
+
 
     }
 }

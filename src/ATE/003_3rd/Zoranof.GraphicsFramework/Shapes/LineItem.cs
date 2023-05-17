@@ -62,10 +62,6 @@ namespace Zoranof.GraphicsFramework.Shapes
             base.OnRender(drawingContext);
         }
 
-        public override NodeOption NearOption(Point point)
-        {
-            return base.NearOption(point);
-        }
         #endregion
 
 

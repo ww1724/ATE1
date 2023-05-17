@@ -13,11 +13,15 @@ using System.ComponentModel.Composition.Primitives;
 using System.ComponentModel.Composition;
 using ATE.Core.Stores;
 using ATE.Core.Mvvm;
+using Microsoft.Extensions.DependencyInjection;
+using Zoranof.WorkFlow;
 
 namespace ATE
 {
     public class AppBootstrapper : BootstrapperBase
     {
+        private IServiceProvider serviceProvider;
+
         private CompositionContainer container;
 
         private AggregateCatalog aggregateCatalog;
@@ -33,6 +37,13 @@ namespace ATE
         public AppBootstrapper()
         {
             Initialize();
+        }
+
+        private ServiceProvider ConfigurationServices()
+        {
+            var services = new ServiceCollection();
+            services.AddCustomWorkFlow();
+            return services.BuildServiceProvider();
         }
 
         protected override void Configure()
@@ -59,6 +70,9 @@ namespace ATE
             loggerService = new LoggerService();
             batch.AddExportedValue(loggerService);
 
+            serviceProvider = ConfigurationServices();
+            batch.AddExportedValue<IServiceProvider>(serviceProvider);
+
             simpleContainer = new SimpleContainer();
             simpleContainer.Singleton<IViewModel, ShellViewModel>(Constants.ShellView);
             simpleContainer.Singleton<IViewModel, MenuStore>(Constants.MenuStore);
@@ -69,7 +83,6 @@ namespace ATE
 
             container.Compose(batch);
         }
-
 
         protected override void OnExit(object sender, EventArgs e)
         {

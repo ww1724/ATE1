@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Zoranof.WorkFlow.Common
+namespace Zoranof.GraphicsFramework.Common
 {
-    internal class InputOption
+    public enum NodeOptionLocation
     {
+        Left, Top, Right, Bottom
     }
 }

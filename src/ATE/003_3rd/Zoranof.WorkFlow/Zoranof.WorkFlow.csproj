@@ -7,7 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="WorkflowCore" Version="3.8.3" />
+    <PackageReference Include="WorkflowCore.Persistence.MySQL" Version="3.8.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Zoranof.GraphicsFramework\Zoranof.GraphicsFramework.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="IC\" />
+    <Folder Include="Templates\" />
   </ItemGroup>
 
 

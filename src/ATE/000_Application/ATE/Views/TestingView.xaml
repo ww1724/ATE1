@@ -11,7 +11,10 @@
     <Grid>
         <graphics:GraphicsCanvas x:Name="GraphicsView"  Grid.Row="1" Items="{Binding Items}"  Background="#FBF9F7"/>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="5">
-            <Button Content="添加随机Item" cm:Message.Attach="AddSomeThingToGraphicsView" Style="{StaticResource PrimaryButtonStyle}"/>
+            <Button Content="  添加随机Item  " Margin="5" cm:Message.Attach="AddSomeThingToGraphicsView" Style="{StaticResource PrimaryButtonStyle}"/>
+            <Button Content="开始执行Action 1" Margin="5" cm:Message.Attach="Test1Action" Style="{StaticResource PrimaryButtonStyle}"/>
+            <Button Content="开始执行Action 2" Margin="5" cm:Message.Attach="Test2Action" Style="{StaticResource PrimaryButtonStyle}"/>
+            <Button Content="开始执行Action 3" Margin="5" cm:Message.Attach="Test3Action" Style="{StaticResource PrimaryButtonStyle}"/>
         </StackPanel>
     </Grid>
 </UserControl>

@@ -11,6 +11,9 @@ namespace Zoranof.GraphicsFramework
     {
         #region Private Member
         private Point pos;
+        private double width;
+
+        private double height;
         #endregion
 
         public GraphicsItem(bool applyDefaultOptions = true)
@@ -22,21 +25,27 @@ namespace Zoranof.GraphicsFramework
             Width = 150;
             Options = new List<NodeOption>();
             Background = Brushes.Transparent;
-            NearOptionDistance = 10;
+            NearOptionDistance = 30;
 
             if (applyDefaultOptions) ApplyDefaultOptions();
+
+            // 事件初始化
+
+            ItemResized += (o, e) =>
+            {
+                BoundingRect = new Rect(pos.X, pos.Y, Width, Height);
+            };
+            ItemMoved += (o, e) =>
+            {
+                BoundingRect = new Rect(pos.X, pos.Y, Width, Height);
+            };
         }
 
-        public GraphicsView AttachedView { get; set; }
 
-
-        #region Private Fields
-        private double width;
-
-        private double height;
-        #endregion
 
         #region Fields
+        public GraphicsView AttachedView { get; set; }
+
         public double NearOptionDistance { get; set; }
 
         public Guid Id { get; set; }
@@ -101,7 +110,7 @@ namespace Zoranof.GraphicsFramework
         public Point Pos
         {
             get => pos;
-            set { pos = value; BoundingRect = new Rect(pos.X, pos.Y, Width, Height); }
+            set { pos = value; OnItemMoved(null); }
         }
         /// <summary>
         /// 父项目
@@ -118,6 +127,7 @@ namespace Zoranof.GraphicsFramework
         /// </summary>
         public Rect BoundingRect { get; set; }
 
+        public Rect SelfRect { get => new Rect(0, 0, width, Height); }
 
         /// <summary>
         /// 包含的数据
@@ -156,11 +166,16 @@ namespace Zoranof.GraphicsFramework
         /// </summary>
         public int Scalage { get; set; }
 
-
         public int ZIndex { get; set; }
         #endregion
 
         #region public slots
+        public virtual void UpdateOptions()
+        {
+            
+            SetDefaultOptions();
+        }
+
         /// <summary>
         /// 应用默认选项点
         /// </summary>
@@ -170,54 +185,13 @@ namespace Zoranof.GraphicsFramework
             {
                 SetDefaultOptions();
             };
-
             OnItemResized(null);
         }
-
-        /// <summary>
-        /// 移动到点位
-        /// </summary>
-        /// <param name="target"></param>
-        public virtual void MoveTo(Point target) { Pos = target; }
-
-        /// <summary>
-        /// 移动偏移
-        /// </summary>
-        /// <param name="offset"></param>
-        public virtual void MoveWithOssfet(Vector offset)
-        {
-            Pos = new Point(Pos.X + offset.X, Pos.Y + offset.Y);
-            OnPosChanged(EventArgs.Empty);
-        }
-
-        /// <summary>
-        /// 转换坐标
-        /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        protected Point PointMapToView(Point point) { return new Point(Pos.X + point.X, Pos.Y + point.Y); }
-
-        /// <summary>
-        /// 转换矩形坐标
-        /// </summary>
-        /// <param name="rect"></param>
-        /// <returns></returns>
-        protected internal virtual Rect MapToView(Rect rect) { return new Rect(); }
 
         /// <summary>
         /// 更新连接
         /// </summary>
         public virtual void UpdateOptionsPosition() { }
-
-        /// <summary>
-        /// 获取附近连接点
-        /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        public virtual NodeOption NearOption(Point point)  {
-            NodeOption option = Options.Where(x => PointMapToView(x.CenterPos).Distance(point) <= NearOptionDistance).FirstOrDefault();
-            return option;
-        }
 
         /// <summary>
         /// 获取Item边界
@@ -236,10 +210,10 @@ namespace Zoranof.GraphicsFramework
         {
             Options = new List<NodeOption>()
                 {
-                    new NodeOption { CenterPos = new Point(Width / 2, 0) },
-                    new NodeOption { CenterPos = new Point(Width / 2, Height) },
-                    new NodeOption { CenterPos = new Point(0, Height / 2) },
-                    new NodeOption { CenterPos = new Point(Width, Height / 2) },
+                    new NodeOption(this) { CenterPos = new Point(Width / 2, 0), Location=NodeOptionLocation.Top,  },
+                    new NodeOption(this) { CenterPos = new Point(Width / 2, Height), Location=NodeOptionLocation.Bottom },
+                    new NodeOption(this) { CenterPos = new Point(0, Height / 2), Location=NodeOptionLocation.Left },
+                    new NodeOption(this) { CenterPos = new Point(Width, Height / 2), Location=NodeOptionLocation.Right },
                 };
         }
         #endregion
@@ -247,6 +221,7 @@ namespace Zoranof.GraphicsFramework
         #region Events
         protected internal virtual void OnRender(DrawingContext drawingContext)
         {
+            drawingContext.PushTransform(new TranslateTransform(Pos.X, Pos.Y)); 
 
             OnDrawFramework(drawingContext);
 
@@ -264,6 +239,7 @@ namespace Zoranof.GraphicsFramework
 
             //OnDrawResizeBorder(drawingContext);
 
+            drawingContext.Pop();
         }
 
         /// <summary>
@@ -290,14 +266,14 @@ namespace Zoranof.GraphicsFramework
         /// <param name="drawingContext"></param>
         protected internal virtual void OnDrawConnectOption(DrawingContext drawingContext)
         {
-            drawingContext.PushTransform(new TranslateTransform(Pos.X, Pos.Y));
-            Pen dotPen = IsHovered ? new Pen(Brushes.Black, 1) : new Pen(Brushes.Transparent, 1);
-            Brush bg = IsHovered ? Brushes.White : Brushes.Transparent;
+            
             foreach (var option in Options)
             {
-                drawingContext.DrawEllipse(bg, dotPen, option.CenterPos, 3, 3);
+                if (!(IsHovered || option.IsOnConnecting)) continue;
+                Pen dotPen = option.IsHovered ? new Pen(Brushes.Blue, 1) : new Pen(Brushes.Black, 1);
+                Brush bg = option.IsHovered ? Brushes.Red : Brushes.White;
+                drawingContext.DrawEllipse(bg, dotPen, option.CenterPos, 4, 4);
             }
-            drawingContext.Pop();
         }
 
         protected internal virtual void OnDrawBeforeMark(DrawingContext drawingContext) { }
@@ -377,7 +353,6 @@ namespace Zoranof.GraphicsFramework
 
         protected internal virtual void OnItemMoved(EventArgs e) => ItemMoved?.Invoke(this, e);
 
-        protected internal virtual void OnPosChanged(EventArgs e) => PosChanged?.Invoke(this, e);
 
         protected internal virtual void OnTextInputed(TextCompositionEventArgs e) => TextInputed?.Invoke(this, e);
         #endregion
