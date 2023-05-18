@@ -33,6 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Zoranof.UI.Wpf\src\Zoranof.UI.Wpf\Zoranof.UI.Wpf.csproj" />
     <ProjectReference Include="..\..\001_Common\ATE.Common\ATE.Common.csproj" />
     <ProjectReference Include="..\..\002_Services\ATE.IService\ATE.IService.csproj" />
     <ProjectReference Include="..\..\002_Services\ATE.Service\ATE.Service.csproj" />
