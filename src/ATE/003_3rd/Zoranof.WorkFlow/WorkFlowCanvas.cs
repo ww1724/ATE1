@@ -12,9 +12,7 @@ namespace Zoranof.WorkFlow
     {
         protected override void OnRender(DrawingContext drawingContext)
         {
-            base.OnRender(drawingContext);
-
-            
+            base.OnRender(drawingContext);   
         }
     }
 }

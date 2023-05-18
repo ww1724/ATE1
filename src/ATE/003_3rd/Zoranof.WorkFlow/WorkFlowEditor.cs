@@ -9,5 +9,9 @@ namespace Zoranof.WorkFlow
 {
     public class WorkFlowEditor : GraphicsEditor
     {
+        public WorkFlowEditor() : base()
+        {
+                
+        }
     }
 }

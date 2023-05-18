@@ -9,7 +9,7 @@ using Zoranof.WorkFlow.Common;
 
 namespace Zoranof.WorkFlow.Base
 {
-    public class AddStepBody : StepBody
+    public class AddStep : StepBody
     {
         public int A { get; set; }
 

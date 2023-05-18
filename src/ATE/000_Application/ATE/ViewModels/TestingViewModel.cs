@@ -66,11 +66,6 @@ namespace ATE.ViewModels
 
             Host = serviceProvider.GetService<IWorkflowHost>();
 
-            Host.RegisterWorkflow<HWorkflow, MyData>();
-            await Task.Run(() =>
-            {
-                Host.Start();
-            });
         }
 
         protected override void OnViewReady(object view)
@@ -88,6 +83,11 @@ namespace ATE.ViewModels
 
         public async void Test1Action()
         {
+            Host.RegisterWorkflow<HWorkflow, MyData>();
+            await Task.Run(() =>
+            {
+                Host.Start();
+            });
             var id = await Host.StartWorkflow<MyData>("H", 1, new MyData { A = 100, B = 10 });
         }
 

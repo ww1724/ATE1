@@ -70,16 +70,20 @@ namespace Zoranof.GraphicsFramework
             ClipToBounds = true;
             ViewerLocation = new Point(0, 0);
             Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FEFCFB"));
-            m_links = new List<OptionLink>();
+            Links = new List<OptionLink>();
             IsEditable = true;
             AllowDrop = true;
-
+            HoverColor = Brushes.Red;
         }
 
         #region Fields
+        Brush HoverColor { get; set; }
+
         public bool IsEditable { get; set; }
 
-        public List<OptionLink> m_links { get; set; }
+        public List<OptionLink> Links { get; set; }
+
+        public OptionLink HoverLink { get; set; }
 
         public double NearOptionDistance { get; set; } = 15;
 
@@ -110,7 +114,7 @@ namespace Zoranof.GraphicsFramework
         private NodeOption m_fromOption = null;
         private NodeOption m_toOption = null;
         private List<Point> m_inlinePoints = new();
-        private Polyline m_previewConnectLine = new(); 
+        private Polyline m_previewConnectLine = new();
         #endregion
 
         #region General Slots
@@ -127,6 +131,21 @@ namespace Zoranof.GraphicsFramework
                 if (Items[i].IsSelected)
                 {
                     Items.RemoveAt(i);
+                }
+            }
+
+            Collection<int> toDeleteLinks = new();
+            int index = 0;
+            foreach (var link in Links)
+            {
+                if (link.IsSelected) { toDeleteLinks.Add(index); }
+                index++;
+            }
+            for (int i = Links.Count- 1; i >= 0;--i)
+            {
+                if (toDeleteLinks.Contains(i))
+                {
+                    Links.RemoveAt(i);
                 }
             }
             InvalidateVisual();
@@ -214,6 +233,36 @@ namespace Zoranof.GraphicsFramework
             InvalidateVisual();
         }
 
+        protected virtual void SelectLinksAS(ICollection<OptionLink> links)
+        {
+            foreach (OptionLink link in Links)
+            {
+                link.IsSelected = false;
+            }
+
+            foreach (OptionLink link in links)
+            {
+                link.IsSelected = true;
+            }
+
+            InvalidateVisual();
+        }
+
+        /// <summary>
+        /// 选择给定元素  增量式
+        /// </summary>
+        /// <param name="items"></param>
+        protected virtual void SelectLinksIS(ICollection<OptionLink> links)
+        {
+
+            foreach (OptionLink link in links)
+            {
+                link.IsSelected = true;
+            }
+            InvalidateVisual();
+        }
+
+
         /// <summary>
         /// 选择全部元素
         /// </summary>
@@ -244,6 +293,7 @@ namespace Zoranof.GraphicsFramework
         /// <param name="selectedBoxRect">当前选框的rect</param>
         protected virtual void ToBoxSelect(Rect selectedBoxRect)
         {
+            // 元素框选
             ICollection<GraphicsItem> toSelectItems = new Collection<GraphicsItem>();
             foreach (var item in Items)
             {
@@ -265,6 +315,28 @@ namespace Zoranof.GraphicsFramework
 
                 }
             }
+            
+            // 线段框选
+            ICollection<OptionLink> toSelectLinks = new Collection<OptionLink>();
+            foreach(var link in Links)
+            {
+                bool isNear = (new LineGeometry(link.StartPoint, link.EndPoint)).Bounds.IntersectsWith(selectedBoxRect);
+                if (isNear) toSelectLinks.Add(link);
+            }
+
+            if (toSelectLinks.Count > 0)
+            {
+                if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+                {
+                    SelectLinksIS(toSelectLinks);
+                }
+                else
+                {
+                    SelectLinksAS(toSelectLinks);
+                }
+            }
+            
+            
             InvalidateVisual();
         }
 
@@ -296,7 +368,7 @@ namespace Zoranof.GraphicsFramework
                 //item.MoveWithOssfet(offset);
                 item.OnItemMoved(null);
             }
-            
+
             InvalidateVisual();
         }
 
@@ -353,7 +425,8 @@ namespace Zoranof.GraphicsFramework
         /// 移动画布
         /// </summary>
         /// <param name="point"></param>
-        protected virtual void MoveViewerTo(Point point) {
+        protected virtual void MoveViewerTo(Point point)
+        {
             ViewerLocation = point;
             this.InvalidateVisual();
         }
@@ -362,14 +435,16 @@ namespace Zoranof.GraphicsFramework
         /// 通过偏移移动画布
         /// </summary>
         /// <param name="offset"></param>
-        protected virtual void MoveViewerWithOffset(Vector offset) {
+        protected virtual void MoveViewerWithOffset(Vector offset)
+        {
             ViewerLocation = new Point(ViewerLocation.X + offset.X, ViewerLocation.Y + offset.Y);
             this.InvalidateVisual();
         }
         #endregion
 
         #region Public Slots
-        public NodeOption GetNearOption(Point point) { 
+        public NodeOption GetNearOption(Point point)
+        {
 
             point = new Point(point.X - ViewerLocation.X, point.Y - ViewerLocation.Y);
             NodeOption roption = null;
@@ -427,15 +502,15 @@ namespace Zoranof.GraphicsFramework
 
             // 容器框架绘制
             OnDrawFramework(drawingContext);
-  
+
             // 绘制元素
             OnDrawItems(drawingContext);
 
             // 各事件绘制
             OnDrawActionIndicator(drawingContext);
-            
+
             // 绘制信息
-            OnDrawAlert(drawingContext);    
+            OnDrawAlert(drawingContext);
 
             // 绘制标志
             OnDrawMask(drawingContext);
@@ -444,11 +519,12 @@ namespace Zoranof.GraphicsFramework
             OnDrawLinks(drawingContext);
         }
 
-        protected virtual void OnDrawFramework(DrawingContext drawingContext) {
+        protected virtual void OnDrawFramework(DrawingContext drawingContext)
+        {
 
             // 是否获取焦点绘制不同边框
             Pen borderPen = new(
-                IsFocused ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#CBCFF2")) :Brushes.Transparent,
+                IsFocused ? new SolidColorBrush((Color)ColorConverter.ConvertFromString("#CBCFF2")) : Brushes.Transparent,
                 3);
 
             Brush bgBrush = Background;
@@ -459,9 +535,10 @@ namespace Zoranof.GraphicsFramework
                 new Rect(new Point(4, 4), new Point(RenderSize.Width - 4, RenderSize.Height - 4)));
         }
 
-        protected virtual void OnDrawItems(DrawingContext drawingContext) {
+        protected virtual void OnDrawItems(DrawingContext drawingContext)
+        {
 
-            if(Items == null) return;
+            if (Items == null) return;
             //启动偏移
             drawingContext.PushTransform(new TranslateTransform(ViewerLocation.X, ViewerLocation.Y));
             drawingContext.PushTransform(new ScaleTransform(ViewerScale, ViewerScale));
@@ -495,40 +572,28 @@ namespace Zoranof.GraphicsFramework
             drawingContext.PushTransform(new TranslateTransform(ViewerLocation.X, ViewerLocation.Y));
             if (m_isReadyToConnectOption)
             {
-                //drawingContext.DrawLine(new Pen(Brushes.Green, 2), m_toConnectOptionStartPoint, m_toConnectOptionEndPoint);
-                StreamGeometry geometry = new();
-                using (StreamGeometryContext ctx = geometry.Open())
-                {
-                    ctx.BeginFigure(m_toConnectOptionStartPoint, false, false);
-                    var c1 = new Point(m_toConnectOptionStartPoint.X + (m_toConnectOptionEndPoint.X - m_toConnectOptionStartPoint.X) / 2, m_toConnectOptionStartPoint.Y + (m_toConnectOptionEndPoint.Y - m_toConnectOptionStartPoint.Y) / 3);
-                    var c2 = new Point(m_toConnectOptionEndPoint.X + (m_toConnectOptionEndPoint.X - m_toConnectOptionStartPoint.X) / 2, m_toConnectOptionEndPoint.Y + (m_toConnectOptionEndPoint.Y - m_toConnectOptionStartPoint.Y) / 2);
-                    drawingContext.DrawEllipse(Brushes.Red, new Pen(Brushes.Red, 2), c1, 6, 6);
-                    drawingContext.DrawEllipse(Brushes.Red, new Pen(Brushes.Red, 2), c2, 6, 6);
+                drawingContext.DrawLine(new Pen(Brushes.Green, 2), m_toConnectOptionStartPoint, m_toConnectOptionEndPoint);
+                //StreamGeometry geometry = new();
+                //using (StreamGeometryContext ctx = geometry.Open())
+                //{
+                //    ctx.BeginFigure(m_toConnectOptionStartPoint, false, false);
+                //    var c1 = new Point(m_toConnectOptionStartPoint.X + (m_toConnectOptionEndPoint.X - m_toConnectOptionStartPoint.X) / 2, m_toConnectOptionStartPoint.Y + (m_toConnectOptionEndPoint.Y - m_toConnectOptionStartPoint.Y) / 3);
+                //    var c2 = new Point(m_toConnectOptionEndPoint.X + (m_toConnectOptionEndPoint.X - m_toConnectOptionStartPoint.X) / 2, m_toConnectOptionEndPoint.Y + (m_toConnectOptionEndPoint.Y - m_toConnectOptionStartPoint.Y) / 2);
+                //    drawingContext.DrawEllipse(Brushes.Red, new Pen(Brushes.Red, 2), c1, 6, 6);
+                //    drawingContext.DrawEllipse(Brushes.Red, new Pen(Brushes.Red, 2), c2, 6, 6);
 
-                    ctx.BezierTo(c1, c2, m_toConnectOptionEndPoint, true, true);
-                }
-                geometry.Freeze();
-                drawingContext.DrawGeometry(null, new Pen(Brushes.Green, 2), geometry);
+                //    ctx.BezierTo(c1, c2, m_toConnectOptionEndPoint, true, true);
+                //}
+                //geometry.Freeze();
+                //drawingContext.DrawGeometry(null, new Pen(Brushes.Green, 2), geometry);
             }
 
-            foreach (var link in m_links)
+            foreach (var link in Links)
             {
-                //drawingContext.DrawLine(new Pen(Brushes.Green, 2), link.StartPoint, link.EndPoint);
-                StreamGeometry geometry = new();
-                using (StreamGeometryContext ctx = geometry.Open())
-                {
-                    ctx.BeginFigure(link.StartPoint, false, false);
-                    var c1 = new Point(link.StartPoint.X + (link.EndPoint.X - link.StartPoint.X) / 2, link.StartPoint.Y + ConnectLineDistance);
-                    var c2 = new Point(link.EndPoint.X - (link.EndPoint.X - link.StartPoint.X) / 2, link.EndPoint.Y - ConnectLineDistance);
-                    drawingContext.DrawEllipse(Brushes.Red, new Pen(Brushes.Red, 2), c1, 6, 6);
-                    drawingContext.DrawEllipse(Brushes.Red, new Pen(Brushes.Red, 2), c2, 6, 6);
-                    ctx.BezierTo( c1, c2, link.EndPoint, true, false);
-                }
-                geometry.Freeze();
-                drawingContext.DrawGeometry(null, new Pen(Brushes.Green, 2), geometry);
-  
+                if (link.IsHovered || link.IsSelected || link.IsDragging) drawingContext.DrawLine(new Pen(Brushes.Red, 2), link.StartPoint, link.EndPoint);
+                else drawingContext.DrawLine(new Pen(Brushes.Green, 2), link.StartPoint, link.EndPoint);
             }
-            
+
             drawingContext.Pop();
         }
 
@@ -545,6 +610,17 @@ namespace Zoranof.GraphicsFramework
             // 左键按下 => 选择元素 || 准备移动元素 || 准备框选元素
             if (e.LeftButton == MouseButtonState.Pressed)
             {
+                foreach (var link in Links)
+                {
+                    bool isNear = e.GetPosition(this).IsPointNearToLine(link.StartPoint, link.EndPoint, 10);
+                    if (link.IsSelected != isNear)
+                    {
+                        link.IsSelected = isNear;
+                        InvalidateVisual();
+                    }
+                }
+
+
 
                 var _activeItem = Items
                     .Where(x => RectMapToViewer(new Rect(
@@ -555,7 +631,7 @@ namespace Zoranof.GraphicsFramework
                     .Contains(e.GetPosition(this)))
                     .OrderByDescending(x => x.ZIndex)
                     .FirstOrDefault();
-                
+
 
                 // 按下鼠标时鼠标下有元素 => 选择Items
                 if (_activeItem != null)
@@ -598,7 +674,7 @@ namespace Zoranof.GraphicsFramework
                         UnSeselectAllItems();
 
                     m_isReadyToBoxSelect = true;
-                    
+
                     m_boxSelectStartPoint = e.GetPosition(this);
                     m_boxSelectEndPoint = e.GetPosition(this);
                     return;
@@ -629,10 +705,10 @@ namespace Zoranof.GraphicsFramework
             {
                 m_isReadyToMoveSelectedItems = false;
                 m_moveItemsStartPoint = new Point(0, 0);
-                m_moveItemsEndPoint= new Point(0, 0);
+                m_moveItemsEndPoint = new Point(0, 0);
                 InvalidateVisual();
             }
-            else if(m_isReadyToMoveViewer)
+            else if (m_isReadyToMoveViewer)
             {
                 m_isReadyToMoveViewer = false;
                 m_viewerMoveStartPoint = new Point(0, 0);
@@ -641,14 +717,14 @@ namespace Zoranof.GraphicsFramework
             }
             else if (m_isReadyToConnectOption)
             {
-                 
+
                 m_toConnectOptionEndPoint = e.GetPosition(this);
                 NodeOption nearOption = GetNearOption(e.GetPosition(this));
                 if (nearOption != null)
                 {
                     m_toOption = nearOption;
                     if (m_toOption.IsConnectOptionValid(m_fromOption))
-                        m_links.Add(new OptionLink { From=m_fromOption, To=m_toOption });
+                        Links.Add(new OptionLink { From = m_fromOption, To = m_toOption });
                 }
                 m_isReadyToConnectOption = false;
                 m_toConnectOptionStartPoint = new Point(0, 0);
@@ -692,10 +768,23 @@ namespace Zoranof.GraphicsFramework
             base.OnMouseMove(e);
 
 
-            // 计算鼠标下的元素
+            #region Hover
+            // link
+            foreach (var link in Links)
+            {
+                bool isNear = e.GetPosition(this).IsPointNearToLine(link.StartPoint, link.EndPoint, 10);
+                if (link.IsHovered != isNear)
+                {
+                    link.IsHovered = isNear;
+                    InvalidateVisual();
+                }
+
+            }
+
+            // item and options
             var mouseInItem = Items
                 .Where(x => RectMapToViewer(new Rect(
-                    x.BoundingRect.Left - NearItemDistance, 
+                    x.BoundingRect.Left - NearItemDistance,
                     x.BoundingRect.Top - NearItemDistance,
                     x.BoundingRect.Width + 2 * NearItemDistance,
                     x.BoundingRect.Height + 2 * NearItemDistance))
@@ -705,7 +794,7 @@ namespace Zoranof.GraphicsFramework
 
             bool isNeedToRefreshHover = false;
             //鼠标下有元素
-            if(mouseInItem != null)
+            if (mouseInItem != null)
             {
                 isNeedToRefreshHover = true;
                 foreach (var item in Items)
@@ -729,14 +818,14 @@ namespace Zoranof.GraphicsFramework
                         }
                     }
                 }
-            } 
+            }
             else
             {
                 foreach (var item in Items)
                 {
                     isNeedToRefreshHover = isNeedToRefreshHover || item.IsHovered;
                     item.IsHovered = false;
-                    foreach(var option in item.Options)
+                    foreach (var option in item.Options)
                     {
                         option.IsHovered = false;
                     }
@@ -745,6 +834,7 @@ namespace Zoranof.GraphicsFramework
             }
             if (isNeedToRefreshHover) InvalidateVisual();
 
+            #endregion
             /// Actions
             // 框选Items
             if (m_isReadyToBoxSelect)
@@ -763,7 +853,7 @@ namespace Zoranof.GraphicsFramework
             else if (m_isReadyToMoveSelectedItems)
             {
                 m_moveItemsEndPoint = e.GetPosition(this);
-                
+
                 var offset = new Vector(
                     (m_moveItemsEndPoint.X - m_moveItemsStartPoint.X) / ViewerScale,
                     (m_moveItemsEndPoint.Y - m_moveItemsStartPoint.Y) / ViewerScale);
@@ -781,8 +871,9 @@ namespace Zoranof.GraphicsFramework
                     m_viewerMoveEndPoint.Y - m_viewerMoveStartPoint.Y));
                 m_viewerMoveStartPoint = m_viewerMoveEndPoint;
             }
+
         }
-        
+
         protected override void OnTextInput(TextCompositionEventArgs e)
         {
             base.OnTextInput(e);
@@ -878,6 +969,6 @@ namespace Zoranof.GraphicsFramework
         protected virtual void OnBoxSelectChanged(GraphicsViewEventArgs e) => BoxSelectChanged?.Invoke(this, e);
         #endregion
 
-        }
+    }
     #endregion
 }

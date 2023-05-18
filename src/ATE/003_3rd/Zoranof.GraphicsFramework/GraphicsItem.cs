@@ -269,7 +269,7 @@ namespace Zoranof.GraphicsFramework
             
             foreach (var option in Options)
             {
-                if (!(IsHovered || option.IsOnConnecting)) continue;
+                if (!(IsHovered || option.IsOnConnecting || IsSelected || IsActive)) continue;
                 Pen dotPen = option.IsHovered ? new Pen(Brushes.Blue, 1) : new Pen(Brushes.Black, 1);
                 Brush bg = option.IsHovered ? Brushes.Red : Brushes.White;
                 drawingContext.DrawEllipse(bg, dotPen, option.CenterPos, 4, 4);
@@ -336,8 +336,6 @@ namespace Zoranof.GraphicsFramework
         public event EventHandler ItemResized;
 
         public event EventHandler ItemMoved;
-
-        public event EventHandler PosChanged;
 
         protected event EventHandler SizeChanged;
 

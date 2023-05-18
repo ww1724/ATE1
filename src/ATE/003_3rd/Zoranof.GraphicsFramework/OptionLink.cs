@@ -32,6 +32,10 @@ namespace Zoranof.GraphicsFramework
 
         public bool IsDragging { get; set; }
 
+        public bool IsHovered { get; set; }
+
+        public bool IsSelected { get; set; }
+
         public OptionLink()
         {
             LinkUpdated += (o, e) =>
