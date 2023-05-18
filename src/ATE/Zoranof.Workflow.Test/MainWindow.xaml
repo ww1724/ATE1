@@ -7,6 +7,12 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <Button Content="Say Hello" Click="Button_Click"></Button>
+        <StackPanel Orientation="Horizontal" Height="45" VerticalAlignment="Top" Margin="30">
+            <Button Content="Test1" Click="Button_Click" Padding="15 0" Margin="10"></Button>
+            <Button Content="Test1" Click="Button_Click" Padding="15 0" Margin="10"></Button>
+            <Button Content="Test1" Click="Button_Click" Padding="15 0" Margin="10"></Button>
+            <Button Content="Test1" Click="Button_Click" Padding="15 0" Margin="10"></Button>
+            <Button Content="Test1" Click="Button_Click" Padding="15 0" Margin="10"></Button>
+        </StackPanel>
     </Grid>
 </Window>

@@ -14,6 +14,7 @@ namespace Zoranof.Workflow.Test.test1
         public int OutB { get; set; }
         public override ExecutionResult Run(IStepExecutionContext context)
         {
+            Console.WriteLine($"Constants: {OutA} + {OutB}");
             OutA = 10;
             OutB = 20;
             return ExecutionResult.Next();

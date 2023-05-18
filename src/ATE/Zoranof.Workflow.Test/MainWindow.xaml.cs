@@ -25,19 +25,33 @@ namespace Zoranof.Workflow.Test
     /// </summary>
     public partial class MainWindow : Window
     {
+
         IServiceProvider ServiceProvider
             => (Application.Current as App).serviceProvider;
+
+
+        IWorkflowHost host =>
+            (Application.Current as App).serviceProvider.GetService<IWorkflowHost>();
+
         public MainWindow()
         {
             InitializeComponent();
+            InitializeWorkflowComponent();
+        }
+
+        private async void InitializeWorkflowComponent()
+        {
+            await Task.Run(() => { 
+                host.Start(); 
+            });
+
+            // test 1 
+            host.RegisterWorkflow<Test1Workflow, Dictionary<string, object>>();
         }
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
-            IWorkflowHost host = ServiceProvider.GetService<IWorkflowHost>();
-            await Task.Run(() => { host.Start(); });
-            host.RegisterWorkflow<Test1Workflow, MyData>();
-            await host.StartWorkflow("Test1", 1, new MyData() { });
+            await host.StartWorkflow("Test1", 1, new Dictionary<string, object> { });
         }
     }
 
@@ -49,24 +63,6 @@ namespace Zoranof.Workflow.Test
         public Dictionary<string, object> keyValuePairs = new Dictionary<string, object>();
     }
 
-    public class Test1Workflow : IWorkflow<MyData>
-    {
-        public string Id => "Test1";
 
-        public int Version => 1;
 
-        public void Build(IWorkflowBuilder<MyData> builder)
-        {
-            builder
-                .StartWith<ConstantNode>()
-                    .Output(data => data.keyValuePairs["A"], step => step.OutA)
-                    .Output(data => data.keyValuePairs["B"], step => step.OutB)
-                .Then<AddStep>()
-                    .Input(step => step.A, data => data.keyValuePairs["A"])
-                    .Input(step => step.B, data => data.keyValuePairs["B"])
-                    .Output(data => data.keyValuePairs["Result"], step => step.Out)
-                .Then<ResultStep>()
-                    .Input(step => step.Result, data => data.keyValuePairs["Result"]);
-        }
-    }
 }

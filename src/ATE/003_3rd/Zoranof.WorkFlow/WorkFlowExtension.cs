@@ -17,7 +17,9 @@ namespace Zoranof.WorkFlow
         public static IServiceCollection AddCustomWorkFlow(this IServiceCollection services)
         {
             services.AddLogging();
-            services.AddWorkflow(x => x.UseMySQL(DbConnectionString, true, true));
+            services.AddWorkflow(x => { 
+                x.UseMySQL(DbConnectionString, true, true);
+            });
 
             // 注册steps workflows events repositories
 

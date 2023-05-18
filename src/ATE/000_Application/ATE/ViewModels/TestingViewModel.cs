@@ -119,17 +119,8 @@ namespace ATE.ViewModels
 
         public int Version => 1;
 
-
-
         public void Build(IWorkflowBuilder<MyData> builder)
         {
-            builder
-                .StartWith<AddStepBody>()
-                .Input(step => step.A, data => data.A)
-                .Input(step => step.B, data => data.B)
-                .Output(data => data.Result, step => step.Out)
-                .Then<ResultStep>()
-                .Input(step => step.Result, data => data.Result);
         }
     }
 }

@@ -26,6 +26,7 @@ namespace Zoranof.Workflow.Test
         {
             ServiceCollection services = new ServiceCollection();
             services.AddCustomWorkFlow();
+            
 
             return services.BuildServiceProvider();
         }

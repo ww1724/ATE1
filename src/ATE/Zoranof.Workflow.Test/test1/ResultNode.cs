@@ -10,10 +10,11 @@ namespace Zoranof.WorkFlow.Base
 {
     public class ResultStep : StepBody
     {
-        public int Result;
+        public object Result;
+
         public override ExecutionResult Run(IStepExecutionContext context)
         {
-            Console.WriteLine($"Result is {Result}");
+            Console.WriteLine($"Result is {(int)Result}");
             Task.Delay(10000).Wait();
             return ExecutionResult.Next();
         }
