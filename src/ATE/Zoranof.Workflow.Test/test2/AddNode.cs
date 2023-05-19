@@ -5,9 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using WorkflowCore.Interface;
 using WorkflowCore.Models;
+using Zoranof.WorkFlow;
 using Zoranof.WorkFlow.Common;
 
-namespace Zoranof.WorkFlow.Base
+namespace Zoranof.Workflow.Test.test2
 {
     public class AddStep : StepBody
     {
@@ -19,9 +20,8 @@ namespace Zoranof.WorkFlow.Base
 
         public override ExecutionResult Run(IStepExecutionContext context)
         {
-            var a = context.PersistenceData;
             Out = A + B;
-            Console.WriteLine($"Calculate { A } Add { B } = { Out }");
+            Console.WriteLine($"Calculate {A} Add {B} = {Out}");
 
             return ExecutionResult.Next();
         }

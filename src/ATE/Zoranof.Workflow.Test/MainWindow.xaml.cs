@@ -16,6 +16,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using WorkflowCore.Interface;
 using Zoranof.Workflow.Test.test1;
+using Zoranof.Workflow.Test.test2;
 using Zoranof.WorkFlow.Base;
 
 namespace Zoranof.Workflow.Test
@@ -45,13 +46,40 @@ namespace Zoranof.Workflow.Test
                 host.Start(); 
             });
 
-            // test 1 
             host.RegisterWorkflow<Test1Workflow, Dictionary<string, object>>();
+            host.RegisterTest2Workflow(ServiceProvider);
         }
 
         private async void Button_Click(object sender, RoutedEventArgs e)
         {
             await host.StartWorkflow("Test1", 1, new Dictionary<string, object> { });
+        }
+
+        private async void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            await Task.Run(() =>
+            {
+                host.StartTest2Workflow();
+            });
+        }
+
+        private async void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Button_Click_4(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Button_Click_5(object sender, RoutedEventArgs e)
+        {
+            host.Stop();
         }
     }
 

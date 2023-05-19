@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WorkflowCore.Interface;
-using Zoranof.WorkFlow.Base;
+using Zoranof.Workflow.Test.test2;
 
 namespace Zoranof.Workflow.Test.test1
 {
@@ -17,6 +17,8 @@ namespace Zoranof.Workflow.Test.test1
 
         public void Build(IWorkflowBuilder<Dictionary<string, object>> builder)
         {
+            Console.WriteLine("Demo: Using Workflow Module With Dynamic Data Dictionary<string, object>");
+            Console.WriteLine("Expression Like: (step, data) => data.Add(\"Result\", step.Out)");
             builder
                 .StartWith<ConstantNode>()
                     .Output((step, data) => data.Add("A", step.OutA))

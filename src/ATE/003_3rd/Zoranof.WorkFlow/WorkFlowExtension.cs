@@ -20,6 +20,7 @@ namespace Zoranof.WorkFlow
             services.AddWorkflow(x => { 
                 x.UseMySQL(DbConnectionString, true, true);
             });
+            services.AddWorkflowDSL();
 
             // 注册steps workflows events repositories
 

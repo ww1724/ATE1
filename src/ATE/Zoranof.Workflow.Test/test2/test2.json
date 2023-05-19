@@ -1,3 +1,25 @@
 {
-
+  "Id": "Test2",
+  "Version": 1,
+  "DataType": "Zoranof.Workflow.Test.test2.DynamicData, Zoranof.Workflow.Test",
+  "Steps": [
+    {
+      "Id": "Constants",
+      "StepType": "Zoranof.Workflow.Test.test2.ConstantNode, Zoranof.Workflow.Test",
+      "NextStepId": "Add",
+      "Outputs": {
+        "A": "step.OutA",
+        "B": "step.OutB"
+      }
+    },
+    {
+      "Id": "Add",
+      "StepType": "Zoranof.Workflow.Test.test2.AddStep, Zoranof.Workflow.Test",
+      "NextStepId": "Result"
+    },
+    {
+      "Id": "Result",
+      "StepType": "Zoranof.Workflow.Test.test2.ResultStep, Zoranof.Workflow.Test"
+    }
+  ]
 }

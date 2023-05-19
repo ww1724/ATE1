@@ -11,4 +11,10 @@
     <ProjectReference Include="..\003_3rd\Zoranof.WorkFlow\Zoranof.WorkFlow.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="test2\test2.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using WorkflowCore.Interface;
 using WorkflowCore.Models;
 
-namespace Zoranof.Workflow.Test.test1
+namespace Zoranof.Workflow.Test.test2
 {
     public class ConstantNode : StepBody
     {
@@ -14,9 +14,9 @@ namespace Zoranof.Workflow.Test.test1
         public int OutB { get; set; }
         public override ExecutionResult Run(IStepExecutionContext context)
         {
-            Console.WriteLine($"Constants: {OutA} + {OutB}");
             OutA = 10;
             OutB = 20;
+            Console.WriteLine($"Constants: {OutA} + {OutB}");
             return ExecutionResult.Next();
         }
     }

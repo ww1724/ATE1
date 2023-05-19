@@ -5,12 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using WorkflowCore.Interface;
 using WorkflowCore.Models;
+using Zoranof.WorkFlow;
 
-namespace Zoranof.WorkFlow.Base
+namespace Zoranof.Workflow.Test.test2
 {
     public class ResultStep : StepBody
     {
-        public object Result;
+        public object Result = 0;
 
         public override ExecutionResult Run(IStepExecutionContext context)
         {
