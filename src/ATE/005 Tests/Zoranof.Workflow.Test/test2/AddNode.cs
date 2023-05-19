@@ -21,7 +21,7 @@ namespace Zoranof.Workflow.Test.test2
         public override ExecutionResult Run(IStepExecutionContext context)
         {
             Out = A + B;
-            Console.WriteLine($"Calculate {A} Add {B} = {Out}");
+            Console.WriteLine($"Calculate { A } Add { B } = { Out }");
 
             return ExecutionResult.Next();
         }

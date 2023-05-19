@@ -20,17 +20,24 @@ namespace Zoranof.Workflow.Test.test2
 
             if (jsonText == "")
             {
-                MessageBox.Show("Test2.Json Nof Found Or Null Content");
+                MessageBox.Show("Test2.Json Not Found Or Null Content");
                 return;
             }
             loader.LoadDefinition(jsonText, Deserializers.Json);
 
         }
 
+        
+
         public static void StartTest2Workflow(this IWorkflowHost host)
         {
+            var data = new DynamicData();
+            data["A"] = 100;
+            data["B"] = 200;
+            data["Result"] = 0;
+
             Console.WriteLine("Demo2: Workflow Module Build Flow Object With Json String");
-            host.StartWorkflow("Test2", 1, new Dictionary<string, object>());
+            host.StartWorkflow("Test2", 1, data);
         }
     }
 

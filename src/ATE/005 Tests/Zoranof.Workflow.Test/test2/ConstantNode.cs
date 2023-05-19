@@ -10,13 +10,12 @@ namespace Zoranof.Workflow.Test.test2
 {
     public class ConstantNode : StepBody
     {
-        public int OutA { get; set; }
-        public int OutB { get; set; }
+        public int OutA { get; set; } = 20;
+        public int OutB { get; set; } = 30;
         public override ExecutionResult Run(IStepExecutionContext context)
         {
-            OutA = 10;
-            OutB = 20;
-            Console.WriteLine($"Constants: {OutA} + {OutB}");
+            
+            Console.WriteLine($"Constants: { OutA } + { OutB }");
             return ExecutionResult.Next();
         }
     }

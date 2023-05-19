@@ -11,7 +11,7 @@ namespace Zoranof.Workflow.Test.test2
 {
     public class ResultStep : StepBody
     {
-        public object Result = 0;
+        public int Result { get; set; }
 
         public override ExecutionResult Run(IStepExecutionContext context)
         {

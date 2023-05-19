@@ -13,7 +13,7 @@ namespace Zoranof.Workflow.Test.test2
         public object this[string propertyName]
         {
             get => Storage.TryGetValue(propertyName, out var value) ? value : null;
-            set => Storage[propertyName] = (object)value;
+            set => Storage[propertyName] = value;
         }
     }
 }
