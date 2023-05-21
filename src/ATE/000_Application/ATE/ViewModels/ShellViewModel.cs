@@ -12,6 +12,12 @@ namespace ATE.ViewModels
         public MenuStore MenuStore
             => (MenuStore)IoC.Get<SimpleContainer>().GetInstance<IViewModel>(Constants.MenuStore);
 
+        public MenuStore TestingStore
+            => (MenuStore)IoC.Get<SimpleContainer>().GetInstance<IViewModel>(Constants.TestingStore);  
+
+        public IWindowManager WindowManager
+            => IoC.Get<IWindowManager>();
+
         public ShellViewModel()
         {
             ActivateItemAsync(new TestingViewModel());
@@ -38,6 +44,11 @@ namespace ATE.ViewModels
 
 
         #region Actions
+        public void LoadTestingCodeAction()
+        {
+            WindowManager.ShowDialogAsync(new LoadTestingCodeViewModel());
+        }
+
         public void NavigationTo(string path)
         {
             ActivateItemAsync(IoC.Get<SimpleContainer>().GetInstance<IViewModel>(path));

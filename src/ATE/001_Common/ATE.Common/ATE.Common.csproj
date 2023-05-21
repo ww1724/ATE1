@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="ReactiveUI" Version="18.4.34" />
+    <PackageReference Include="SqlSugarCore" Version="5.1.4.76" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,4 @@
-﻿using ATE.Core.Mvvm;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,9 +7,7 @@ using System.Threading.Tasks;
 
 namespace ATE.ViewModels
 {
-    public class EditorViewModel : Screen, IViewModel
+    public class LoadTestingCodeViewModel : Screen
     {
-        public int CodeId { get; set; }
-
     }
 }
