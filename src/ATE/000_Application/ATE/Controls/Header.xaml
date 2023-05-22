@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:cm="http://www.caliburnproject.org"
              xmlns:viewmodels="clr-namespace:ATE.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:ShellViewModel}"
              xmlns:helpers="clr-namespace:Zoranof.UI.Wpf.Helpers;assembly=Zoranof.UI.Wpf"
              mc:Ignorable="d" 
@@ -38,7 +39,6 @@
                     SelectedItem="{Binding MenuStore.CurrentMenuItem}"
                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                     ScrollViewer.VerticalScrollBarVisibility="Disabled">
-
                         <ListBox.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Horizontal" />
@@ -85,9 +85,11 @@
                             </Style>
                         </ListBox.ItemContainerStyle>
                     </ListBox>
-                    <Button WindowChrome.IsHitTestVisibleInChrome="True"
+                    <Button x:Name="LoadTestingCode"
+                        WindowChrome.IsHitTestVisibleInChrome="True"
                         Style="{StaticResource LinkButtonStyle}" Width="35" helpers:IconHelper.Icon="&#xe649;" 
-                            Foreground="{DynamicResource InverseTextColor}" />
+                        Foreground="{DynamicResource InverseTextColor}"
+                        cm:Message.Attach="[Event Click] = [Action LoadTestingCodeAction]" />
                 </StackPanel>
             </Grid>
 

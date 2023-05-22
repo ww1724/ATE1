@@ -19,7 +19,6 @@ namespace ATE.ViewModels
 {
     public class TestingViewModel : Screen, IViewModel
     {
-        DispatcherTimer DispatcherTimer;
 
         IServiceProvider serviceProvider
             => IoC.Get<IServiceProvider>();
@@ -34,9 +33,6 @@ namespace ATE.ViewModels
                 new StartNode() { Pos = new Point(100, 100) } ,
                 new StartNode() { Pos = new Point(200, 150) } ,
                 new StartNode() { Pos = new Point(100, 600) } ,
-                new WorkflowNode() { Pos = new Point(500, 600) } ,
-                new WorkflowNode() { Pos = new Point(500, 200) } ,
-                new WorkflowNode() { Pos = new Point(20, 200) } ,
             };
         }
 

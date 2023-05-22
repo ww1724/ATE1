@@ -1,4 +1,5 @@
-﻿using ATE.Wpf.Services.Interfaces;
+﻿using ATE.Common.Entities;
+using ATE.Wpf.Services.Interfaces;
 using SqlSugar;
 using System.Configuration;
 
@@ -32,17 +33,20 @@ namespace ATE.Wpf.Services
         private void InitTables()
         {
             sugarClient.DbMaintenance.CreateDatabase();
-            //sugarClient.CodeFirst.InitTables(
-            //    typeof(UserEntity),
-            //    typeof(GeneralDataEntity),
-            //    typeof(ConfigurationEntity),
+            sugarClient.CodeFirst.InitTables(
+                typeof(ProductEntity),
+                typeof(UserEntity),
+                typeof(TestingCodeEntity));
 
-            //    typeof(TestingCodeEntity),
-            //    typeof(TestingDataEntity),
-            //    typeof(TestingProject),
-            //    typeof(TestingAction),
-            //    typeof(TestingRecord),
-            //    typeof(ProductEntity));
+                //typeof(GeneralDataEntity),
+                //typeof(ConfigurationEntity),
+
+                
+                //typeof(TestingDataEntity),
+                //typeof(TestingProject),
+                //typeof(TestingAction),
+                //typeof(TestingRecord),
+                //typeof(ProductEntity));
 
             //if (!sugarClient.Queryable<UserEntity>().Any())
             //{
