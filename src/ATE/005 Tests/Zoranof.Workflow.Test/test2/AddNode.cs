@@ -20,6 +20,8 @@ namespace Zoranof.Workflow.Test.test2
 
         public override ExecutionResult Run(IStepExecutionContext context)
         {
+           var data = context.Workflow.Data;
+            var b = context.Step.Name;
             Out = A + B;
             Console.WriteLine($"Calculate { A } Add { B } = { Out }");
 

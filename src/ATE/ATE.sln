@@ -42,6 +42,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Zoranof.Workflow.Test", "005 Tests\Zoranof.Workflow.Test\Zoranof.Workflow.Test.csproj", "{8C13BE1D-E269-4F13-BC26-3F322F0593B4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "005 Tests\ConsoleApp1\ConsoleApp1.csproj", "{5FC74C93-50ED-4B26-B601-24E1B723018C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -92,6 +94,10 @@ Global
 		{8C13BE1D-E269-4F13-BC26-3F322F0593B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C13BE1D-E269-4F13-BC26-3F322F0593B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C13BE1D-E269-4F13-BC26-3F322F0593B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FC74C93-50ED-4B26-B601-24E1B723018C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FC74C93-50ED-4B26-B601-24E1B723018C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FC74C93-50ED-4B26-B601-24E1B723018C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FC74C93-50ED-4B26-B601-24E1B723018C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -108,6 +114,7 @@ Global
 		{48778663-D2BB-4AF7-A4E9-F7E705D12A58} = {9810A20A-35EA-4C7F-92C0-39A4FA807D0B}
 		{105FB0E8-ABB3-4830-9FFC-A613731979D2} = {9810A20A-35EA-4C7F-92C0-39A4FA807D0B}
 		{8C13BE1D-E269-4F13-BC26-3F322F0593B4} = {CA8DFFBC-5AAB-47B2-AE6D-1B1AC759AFAC}
+		{5FC74C93-50ED-4B26-B601-24E1B723018C} = {CA8DFFBC-5AAB-47B2-AE6D-1B1AC759AFAC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9064D05F-0AC3-4BD1-8D1A-1B12BE0ED080}
